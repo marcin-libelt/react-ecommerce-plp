@@ -1,14 +1,9 @@
-<div id="root"></div>
-
+<div id="react-category-root"></div>
 <script>
-
-    document.global_data_for_react_app = {
-    };
-
-    document.checkout_cart_url = '/checkout/cart/';
-
     require(['react-app', 'jquery'], function (App, jQuery) {
-        let React = App.init('root', 'some-parameter');
+        let React = App.init('react-category-root', {
+            gql: '<?php echo $block->getUrl('graphql'); ?>',
+            topCategories: <?php echo $block->getTopCategoriesJson(); ?>,
+            categoryId: '<?php echo $block->getCurrentCategory()->getId() ?>' });
     });
-
 </script>

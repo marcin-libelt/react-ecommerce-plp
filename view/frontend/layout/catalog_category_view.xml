@@ -9,7 +9,10 @@
     <body>
 
         <referenceContainer name="content">
-                <block class="Magento\Framework\View\Element\Template" name="react.category" template="Discount_ReactCategory::index.phtml" before="-"/>
+                <block name="category.react.products"
+                       class="Discount\ReactCategory\Block\Category\View"
+                       template="Discount_ReactCategory::index.phtml"
+                       before="-"/>
         </referenceContainer>
 
         <referenceBlock name="category.products" remove="true" />
