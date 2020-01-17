@@ -1,0 +1,9 @@
+<div id="react-category-root"></div>
+<script>
+    require(['react-app', 'jquery'], function (App, jQuery) {
+        let React = App.init('react-category-root', {
+            gql: '<?php echo $block->getUrl('graphql'); ?>',
+            topCategories: <?php echo $block->getTopCategoriesJson(); ?>,
+            categoryId: '<?php echo $block->getCurrentCategory()->getId() ?>' });
+    });
+</script>
