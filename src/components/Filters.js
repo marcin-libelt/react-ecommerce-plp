@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ApolloClient, { gql } from 'apollo-boost';
 import List from "./filters/List";
 import PriceSlider from "./filters/PriceSlider";
@@ -124,5 +125,12 @@ class Filters extends React.Component {
         </div>
     }
 }
+
+Filters.propTypes = {
+    gqlParams: PropTypes.object.isRequired,
+    onFiltersUpdate: PropTypes.func.isRequired,
+    selectedFilters: PropTypes.object.isRequired
+};
+
 export default Filters;
 

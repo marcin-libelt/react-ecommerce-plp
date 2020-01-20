@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class List extends React.Component {
     constructor(props) {
@@ -67,5 +68,11 @@ class List extends React.Component {
         </ul>
     };
 }
+
+List.propTypes = {
+    filter: PropTypes.object.isRequired,
+    onFiltersUpdate: PropTypes.func.isRequired,
+    selectedFilters: PropTypes.array
+};
 
 export default List;

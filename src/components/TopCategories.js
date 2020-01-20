@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const TopCategories = (props) => {
 
@@ -15,6 +16,10 @@ const TopCategories = (props) => {
             {createCategories()}
         </ul>
     </div>
+};
+
+TopCategories.propTypes = {
+    categories: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default TopCategories;

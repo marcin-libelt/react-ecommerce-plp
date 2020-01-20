@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ProductItem from "./ProductItem";
 
 const Products = function(props) {
@@ -10,5 +11,8 @@ const Products = function(props) {
     </ul>
 };
 
+Products.propTypes = {
+    products: PropTypes.arrayOf(PropTypes.object)
+};
 
 export default Products;

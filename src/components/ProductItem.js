@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class ProductItem extends React.Component {
   constructor(props) {
@@ -33,5 +34,9 @@ class ProductItem extends React.Component {
       </li>
   }
 }
+
+ProductItem.propTypes = {
+    details: PropTypes.object.isRequired
+};
 
 export default ProductItem;

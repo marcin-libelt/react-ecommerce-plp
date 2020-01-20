@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types';
 import InputRange from 'react-input-range';
 
 class PriceSlider extends React.Component {
@@ -15,7 +16,7 @@ class PriceSlider extends React.Component {
     }
 
     componentDidMount() {
-        const { filter, selectedFilters } = this.props;
+        const { filter } = this.props;
 
         const priceRange = filter["filter_items"].reduce((acc, cur) => {
             acc[cur.label] = parseInt(cur["value_string"]);
@@ -25,7 +26,6 @@ class PriceSlider extends React.Component {
     }
 
     onPriceSelectorChange(value) {
-        //console.log(value);
         this.props.onFiltersUpdate(value, this.props.filter["name"]);
     }
 
@@ -38,5 +38,11 @@ class PriceSlider extends React.Component {
             onChangeComplete={() => this.onPriceSelectorChange(this.state.currentRangeSelection)} />
     }
 }
+
+PriceSlider.propTypes = {
+    filter: PropTypes.object.isRequired,
+    onFiltersUpdate: PropTypes.func.isRequired,
+    selectedFilters: PropTypes.array
+};
 
 export default PriceSlider;

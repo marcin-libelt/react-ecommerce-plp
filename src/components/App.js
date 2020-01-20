@@ -1,11 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ApolloClient, { gql } from 'apollo-boost';
 import SortersZoom from "./SortersZoom";
 import Products from "./Products";
 import Filters from "./Filters";
 import TopCategories from "./TopCategories";
 import FiltersActions from "./FiltersActions";
-import { createBrowserHistory } from 'history';
 
 const zoomRange = {
     min: 0,
@@ -25,7 +25,6 @@ class App extends React.Component {
         this.state = {
             products: [],
             selectedFilters: {},
-            priceFilter: {},
             sort: 'relevance',
             zoom: 1
         };
@@ -72,21 +71,11 @@ class App extends React.Component {
         }
         }
         `;
-
-        this.history = createBrowserHistory();
-        this.history.listen((location, action) => {
-            if(action == "POP") {
-                this.setState({
-                    selectedFilters: location.state.filters
-                });
-            }
-            console.log(action, location.pathname, location.state);
-        });
-
     }
 
     componentDidMount() {
         this.loadInitialProducts();
+        this.filtersFromUri();
     }
 
     onSetSorters(sort) {
@@ -97,15 +86,20 @@ class App extends React.Component {
         console.log('button click!')
     }
 
+    filtersFromUri() {
+        if(location.search) {
+            console.log(this.decodeFilterUri(location.search));
+        }
+    }
+
     onFiltersUpdate(value, filterVarName) {
 
         // exception for Price filter
         if(filterVarName === "price") {
-
+            const minMax = [value.min, value.max];
             this.setState(prevState => ({
-                priceFilter: value
+                selectedFilters: { ...prevState.selectedFilters, "price": minMax }
             }));
-
         } else {
 
             let selectedFilters;
@@ -119,7 +113,7 @@ class App extends React.Component {
 
                 this.setState({
                     selectedFilters
-                });
+                }, this.afterFiltersAction);
 
             } else {
                 const index = this.state.selectedFilters[filterVarName].indexOf(value);
@@ -139,10 +133,9 @@ class App extends React.Component {
                         ...prevState.selectedFilters,
                         [filterVarName]: selectedFilters
                     }
-                }))
+                }), this.afterFiltersAction);
             }
         }
-        this.afterFiltersAction();
     }
 
     /** update URL
@@ -150,8 +143,24 @@ class App extends React.Component {
     // get filtered products
     */
     afterFiltersAction() {
-        this.history.push('/home', { filters: this.state.selectedFilters });
+        const queryString = this.encodeFilterUri();
+
+
+        //const decoded = this.decodeFilterUri(queryString);
     }
+
+    decodeFilterUri = (stringUri) => {
+        const ar = decodeURIComponent(stringUri).split('&');
+        return ar.reduce((acc, cur) => {
+            const f = cur.split('=');
+            acc[f[0]] = f[1].split(',');
+            return acc;
+        }, {});
+    };
+
+    encodeFilterUri = () => Object.entries(this.state.selectedFilters).map(([key, value]) => {
+        return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    }).join('&');
 
     /** Wysyła zapytanie GQL **/
     onFiltersSubmit() {
@@ -206,5 +215,9 @@ class App extends React.Component {
         );
     }
 }
+
+App.propTypes  = {
+    parameter: PropTypes.object.isRequired
+};
 
 export default App;
