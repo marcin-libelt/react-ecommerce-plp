@@ -14,14 +14,23 @@ const components = {
 
 const Header = (props) => {
 
-    return <div className={'header'}>
-        <a href="#"
+    let header;
+    if(props.requestVar !== "price") {
+        header = <a href="#"
            aria-expanded={!props.collapsed}
            onClick={(event) => props.onHeaderClick(props.requestVar)}>
             <span>{props.title}</span>
             {props.counter}
             <i className={'chevron'}>&nbsp;</i>
         </a>
+    } else {
+        header = <a href="#">
+            <span>{props.title}</span>
+        </a>
+    }
+
+    return <div className={'header'}>
+        {header}
     </div>
 };
 

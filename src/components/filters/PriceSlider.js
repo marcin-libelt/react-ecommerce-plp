@@ -9,20 +9,18 @@ class PriceSlider extends React.Component {
 
         this.onPriceSelectorChange = this.onPriceSelectorChange.bind(this);
 
+        const priceRange = this.props.filter["filter_items"].reduce((acc, cur) => {
+            acc[cur.label] = parseInt(cur["value_string"]);
+            return acc;
+        }, {});
+
         this.state = {
-            priceRange: { min: 2, max: 10 },
-            currentRangeSelection: { min: 2, max: 10 },
+            priceRange,
+            currentRangeSelection: priceRange,
         };
     }
 
     componentDidMount() {
-        const { filter } = this.props;
-
-        const priceRange = filter["filter_items"].reduce((acc, cur) => {
-            acc[cur.label] = parseInt(cur["value_string"]);
-            return acc;
-        }, {});
-        this.setState({ priceRange });
     }
 
     onPriceSelectorChange(value) {
