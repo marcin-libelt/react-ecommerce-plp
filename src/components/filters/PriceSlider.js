@@ -21,6 +21,15 @@ class PriceSlider extends React.Component {
     }
 
     componentDidMount() {
+        const { selectedFilter } = this.props;
+        if(selectedFilter.length === 2) {
+            this.setState({
+                currentRangeSelection: {
+                    min: parseInt(selectedFilter[0]),
+                    max: parseInt(selectedFilter[1])
+                }
+            });
+        }
     }
 
     onPriceSelectorChange(value) {
@@ -28,19 +37,22 @@ class PriceSlider extends React.Component {
     }
 
     render() {
-        return <InputRange
-            maxValue={this.state.priceRange["max"]}
-            minValue={this.state.priceRange["min"]}
-            value={this.state.currentRangeSelection}
-            onChange={value => this.setState({ currentRangeSelection: value })}
-            onChangeComplete={() => this.onPriceSelectorChange(this.state.currentRangeSelection)} />
+        return <div className={'filter-box price-filter'}>
+            <div className={'header'}>{'Price'}</div>
+            <InputRange
+                maxValue={this.state.priceRange["max"]}
+                minValue={this.state.priceRange["min"]}
+                value={this.state.currentRangeSelection}
+                onChange={(value) => this.setState({ currentRangeSelection: value })}
+                onChangeComplete={() => this.onPriceSelectorChange(this.state.currentRangeSelection)} />
+        </div>
     }
 }
 
 PriceSlider.propTypes = {
     filter: PropTypes.object.isRequired,
     onFiltersUpdate: PropTypes.func.isRequired,
-    selectedFilters: PropTypes.array
+    selectedFilter: PropTypes.array
 };
 
 export default PriceSlider;

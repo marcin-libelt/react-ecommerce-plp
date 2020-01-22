@@ -12,7 +12,7 @@ class List extends React.Component {
     // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html
     UNSAFE_componentWillReceiveProps(newProps) {
         this.selectSelectedOptions(newProps);
-        console.log('component Will Receive Props');
+        //console.log('component Will Receive Props');
     }
 
     componentDidMount() {
@@ -43,7 +43,7 @@ class List extends React.Component {
                     <input type={'checkbox'}
                            title={this.state.filters[item].label}
                            checked={isSelected}
-                           onChange={(event) => this.props.onFiltersUpdate(item, this.props.filter["request_var"])}
+                           onChange={(event) => this.props.onFiltersUpdate(item, this.props.filter["request_var"], event)}
                            id={index + '-' + item}/>
                     <label htmlFor={index + '-' + item}>{this.state.filters[item].label}</label>
                 </li>
@@ -54,7 +54,7 @@ class List extends React.Component {
                     <button type={'button'}
                             aria-selected={isSelected}
                             className={isSelected ? 'is-selected' : ''}
-                            onClick={(event) => this.props.onFiltersUpdate(item, this.props.filter["request_var"])}>
+                            onClick={(event) => this.props.onFiltersUpdate(item, this.props.filter["request_var"], event)}>
                         <span>{this.state.filters[item].label}</span>
                     </button>
                 </li>

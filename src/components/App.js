@@ -5,12 +5,14 @@ import SortersZoom from "./SortersZoom";
 import Products from "./Products";
 import Filters from "./Filters";
 import TopCategories from "./TopCategories";
-import FiltersActions from "./FiltersActions";
+import MobileDropdownTogglers from './MobileDropdownTogglers';
 
 const zoomRange = {
     min: 0,
     max: 2
 };
+
+const uriHashPrefix = 'categoryFilters!';
 
 class App extends React.Component {
 
@@ -21,12 +23,18 @@ class App extends React.Component {
         this.onFiltersClear = this.onFiltersClear.bind(this);
         this.onSetSorters = this.onSetSorters.bind(this);
         this.onSetZoom = this.onSetZoom.bind(this);
+        this.onDropdownToggle = this.onDropdownToggle.bind(this);
+        this.onFiltersSubmit = this.onFiltersSubmit.bind(this);
 
         this.state = {
             products: [],
+            filters: null,
             selectedFilters: {},
             sort: 'relevance',
-            zoom: 1
+            zoom: 1,
+            dropdown: null,
+            userFiltersSelected: false,
+            userFiltersSubmited: false
         };
 
         this.client = new ApolloClient({
@@ -71,10 +79,27 @@ class App extends React.Component {
         }
         }
         `;
+        this.FILTERS = gql`
+        {
+        discountCatalogFilters(category_id: ${this.props.parameter.categoryId}) {
+            filters {
+              name
+              filter_items_count
+              request_var
+              filter_items {
+                label
+                value_string
+                items_count
+              }
+            }
+          } 
+        }
+        `;
     }
 
     componentDidMount() {
         this.loadInitialProducts();
+        this.loadFilters();
         this.filtersFromUri();
     }
 
@@ -83,12 +108,20 @@ class App extends React.Component {
     }
 
     handleClick() {
-        console.log('button click!')
+
     }
 
     filtersFromUri() {
-        if(location.search) {
-            console.log(this.decodeFilterUri(location.search));
+        const regex = RegExp(uriHashPrefix);
+        if(regex.test(location.hash)) {
+            let str = location.hash.replace(regex, '');
+            str = str.replace('#', '');
+            if(str.length > 0) {
+                const recoveredFiltersState = this.decodeFilterUri(str);
+                this.setState({
+                    selectedFilters: recoveredFiltersState
+                })
+            }
         }
     }
 
@@ -99,7 +132,7 @@ class App extends React.Component {
             const minMax = [value.min, value.max];
             this.setState(prevState => ({
                 selectedFilters: { ...prevState.selectedFilters, "price": minMax }
-            }));
+            }), this.afterFiltersAction);
         } else {
 
             let selectedFilters;
@@ -123,31 +156,44 @@ class App extends React.Component {
                     // remove
                     selectedFilters = [...this.state.selectedFilters[filterVarName]];
                     selectedFilters.splice(index, 1);
+                    let prevFilters = {...this.state.selectedFilters};
+                    let newState = {};
+
+                    // remove entire filter
+                    if(selectedFilters.length === 0) {
+                        delete prevFilters[filterVarName];
+                        newState = {
+                            selectedFilters: prevFilters
+                        };
+                    } else {
+                        newState = {
+                            selectedFilters: {
+                                ...prevFilters,
+                                [filterVarName]: selectedFilters
+                            }
+                        };
+                    }
+                    this.setState(newState, this.afterFiltersAction);
+
                 } else {
                     // add
                     selectedFilters = [...this.state.selectedFilters[filterVarName], value];
+                    this.setState(prevState => ({
+                        selectedFilters: {
+                            ...prevState.selectedFilters,
+                            [filterVarName]: selectedFilters
+                        }
+                    }), this.afterFiltersAction);
                 }
-
-                this.setState(prevState => ({
-                    selectedFilters: {
-                        ...prevState.selectedFilters,
-                        [filterVarName]: selectedFilters
-                    }
-                }), this.afterFiltersAction);
             }
         }
     }
 
-    /** update URL
-    // update state
-    // get filtered products
-    */
     afterFiltersAction() {
-        const queryString = this.encodeFilterUri();
-
-
-        //const decoded = this.decodeFilterUri(queryString);
+        //console.log(this.isAnyFiltersApplied());
     }
+
+    isAnyFiltersApplied = () => !!Object.keys(this.state.selectedFilters).length;
 
     decodeFilterUri = (stringUri) => {
         const ar = decodeURIComponent(stringUri).split('&');
@@ -164,13 +210,27 @@ class App extends React.Component {
 
     /** Wysyła zapytanie GQL **/
     onFiltersSubmit() {
+        // TODO: ogarnąc stany HASH'a
         alert('submited!');
+        const queryString = this.encodeFilterUri();
+        //const decoded = this.decodeFilterUri(queryString);
+        location.hash = uriHashPrefix + queryString;
     }
 
     onFiltersClear() {
+        // TODO: ogarnąc stany HASH'a
+        location.hash = '';
         this.setState({
-            selectedFilters: {}
-        })
+            selectedFilters: {},
+            userFiltersSubmited: false,
+            userFiltersSelected: false,
+        }, this.onFiltersSubmit)
+    }
+
+    onDropdownToggle(type) {
+        this.setState(prevState => ({
+            dropdown: prevState.dropdown === type ? null : type
+        }));
     }
 
     onSetZoom(value) {
@@ -192,27 +252,49 @@ class App extends React.Component {
             });
     }
 
+    loadFilters() {
+        this.client
+            .query({
+                query: this.FILTERS
+            })
+            .then(result => {
+                this.setState({filters: result.data["discountCatalogFilters"].filters});
+            });
+    }
+
     render() {
-        console.log('App.js render')
-        return (
-            <div className={'react-category-container'} >
-                <div className={'filters-block'}>
-                    <TopCategories categories={this.props.parameter.topCategories}/>
-                    <Filters selectedFilters={this.state.selectedFilters}
-                             onFiltersUpdate={this.onFiltersUpdate}
-                             gqlParams={this.props.parameter}/>
-                    <FiltersActions onFiltersSubmit={this.onFiltersSubmit}
-                                    onFiltersClear={this.onFiltersClear}/>
+        if(this.state.filters !== null) {
+            return (
+                <div className={'react-category-container'}>
+                    <div className={'filters-block'}>
+                        <TopCategories categories={this.props.parameter.topCategories}/>
+                        <Filters filters={this.state.filters}
+                                 selectedFilters={this.state.selectedFilters}
+                                 onFiltersUpdate={this.onFiltersUpdate}
+                                 gqlParams={this.props.parameter}
+                                 hidden={this.state.dropdown !== "filters"}
+                        />
+                        <MobileDropdownTogglers onFiltersSubmit={this.onFiltersSubmit}
+                                                onFiltersClear={this.onFiltersClear}
+                                                onDropdownToggle={this.onDropdownToggle}
+                                                dropdownStatus={this.state.dropdown}
+                                                userFiltersSelected={this.state.userFiltersSelected}
+                                                userFiltersSubmited={this.state.userFiltersSubmited}
+                        />
+                    </div>
+                    <div className={'products-block zoom-' + this.state.zoom}>
+                        <SortersZoom onSetSorters={this.onSetSorters}
+                                     onSetZoom={this.onSetZoom}
+                                     currentSorter={this.state.sort}
+                                     hidden={this.state.dropdown !== "sorters"}
+                        />
+                        <Products products={this.state.products}/>
+                    </div>
                 </div>
-                <div className={'products-block zoom-' + this.state.zoom}>
-                    <SortersZoom onSetSorters={this.onSetSorters}
-                                 onSetZoom={this.onSetZoom}
-                                 currentSorter={this.state.sort}
-                    />
-                    <Products products={this.state.products}/>
-                </div>
-            </div>
-        );
+            );
+        } else {
+            return <div className={'loading'}>{'Loading...'}</div>
+        }
     }
 }
 

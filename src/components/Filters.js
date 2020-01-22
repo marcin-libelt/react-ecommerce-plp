@@ -8,8 +8,7 @@ const components = {
     filter_color: List,
     filter_heel_height: List,
     shoestyle: List,
-    size: List,
-    price: PriceSlider
+    size: List
 };
 
 const Header = (props) => {
@@ -18,15 +17,15 @@ const Header = (props) => {
     if(props.requestVar !== "price") {
         header = <a href="#"
            aria-expanded={!props.collapsed}
-           onClick={(event) => props.onHeaderClick(props.requestVar)}>
+           onClick={(event) => { event.preventDefault(); props.onHeaderClick(props.requestVar)}}>
             <span>{props.title}</span>
             {props.counter}
             <i className={'chevron'}>&nbsp;</i>
         </a>
     } else {
-        header = <a href="#">
+        header = <span>
             <span>{props.title}</span>
-        </a>
+        </span>
     }
 
     return <div className={'header'}>
@@ -42,8 +41,10 @@ class Filters extends React.Component {
         this.onHeaderClick = this.onHeaderClick.bind(this);
 
         this.state = {
-            filters: [],
-            filtersCollapsedStatus: {}
+            filters: null,
+            filtersCollapsedStatus: {},
+            filtersDropdownVisible: false,
+            sortDropdownVisible: false
         };
 
         this.client = new ApolloClient({
@@ -66,10 +67,9 @@ class Filters extends React.Component {
           } 
         }
         `;
-        this.loadFilters();
     }
 
-    loadFilters() {
+    componentDidMount() {
         this.client
             .query({
                 query: this.FILTERS
@@ -97,6 +97,8 @@ class Filters extends React.Component {
             }
         }));
     }
+
+    getPriceFilterItem = (filterVarCode) => this.state.filters.find(filterItems => filterItems.request_var === filterVarCode);
 
     createFilters = () => this.state.filters.map(this.createFilter);
 
@@ -129,16 +131,30 @@ class Filters extends React.Component {
     };
 
     render() {
-        return <div className={'filters-container'}>
-            {this.createFilters()}
-        </div>
+        const clsNamesArr = [
+            'filters-container',
+            this.props.hidden ? 'mobile-hidden' : ''
+        ];
+        if(this.state.filters !== null) {
+            return <div className={clsNamesArr.join(' ')}>
+                    <PriceSlider filter={this.getPriceFilterItem("price")}
+                                 selectedFilter={this.props.selectedFilters["price"] ? this.props.selectedFilters["price"] : []}
+                                 onFiltersUpdate={this.props.onFiltersUpdate} />
+                    {this.createFilters()}
+                </div>
+        } else {
+            return <div className={'loading'}>Loading...</div>
+        }
     }
 }
 
 Filters.propTypes = {
+    filters: PropTypes.array.isRequired,
     gqlParams: PropTypes.object.isRequired,
     onFiltersUpdate: PropTypes.func.isRequired,
-    selectedFilters: PropTypes.object.isRequired
+    selectedFilters: PropTypes.object.isRequired,
+    dropdownStatus: PropTypes.bool,
+    hidden: PropTypes.bool
 };
 
 export default Filters;
