@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 const SortersZoom = (props) => {
 
     const sorters = {
-        latest: 'Latest',
+        created_at: 'Latest',
         high: 'High',
         low: 'Low',
-        relevance: 'Relevance'
+        position: 'Relevance'
     };
 
     const CreateSorter = (item, index) => {
@@ -31,8 +31,8 @@ const SortersZoom = (props) => {
     return <div className={clsNamesArr.join(' ')}>
         <div className={'zoom'}>
             <span>{'Zoom'}</span>
-            <a href="#" onClick={() => props.onSetZoom(-1)} className={'down'}><span>decrease image size</span></a>
-            <a href="#" onClick={() => props.onSetZoom(1)} className={'up'}><span>increase image size</span></a>
+            <a href="#" onClick={(event) => { event.preventDefault(); props.onSetZoom(-1)}} className={'down'}><span>decrease image size</span></a>
+            <a href="#" onClick={(event) => { event.preventDefault(); props.onSetZoom(1)}} className={'up'}><span>increase image size</span></a>
         </div>
         <div className={'small-label'}>
             {'Sort by'}

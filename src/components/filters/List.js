@@ -4,24 +4,14 @@ import PropTypes from 'prop-types';
 class List extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             filters: {}
         }
     }
 
-    // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html
-    UNSAFE_componentWillReceiveProps(newProps) {
-        this.selectSelectedOptions(newProps);
-        //console.log('component Will Receive Props');
-    }
-
-    componentDidMount() {
-        this.selectSelectedOptions(this.props);
-    }
-
-    selectSelectedOptions(props) {
+    static getDerivedStateFromProps = (props, state) => {
         const { filter, selectedFilters } = props;
-
         const filters = filter["filter_items"].reduce((acc, cur) => {
             acc[cur["value_string"]] = {
                 label: cur.label,
@@ -30,7 +20,9 @@ class List extends React.Component {
             return acc;
         }, {});
 
-        this.setState({ filters });
+        return {
+            filters
+        }
     }
 
     createFormFields = () => Object.keys(this.state.filters).map(this.createField);

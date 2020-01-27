@@ -6,13 +6,7 @@ import Products from "./Products";
 import Filters from "./Filters";
 import TopCategories from "./TopCategories";
 import MobileDropdownTogglers from './MobileDropdownTogglers';
-
-const zoomRange = {
-    min: 0,
-    max: 2
-};
-
-const uriHashPrefix = 'categoryFilters!';
+import { prepareProductsQuery, prepareFiltersQuery } from '../helpers/queryParameters'
 
 class App extends React.Component {
 
@@ -29,99 +23,69 @@ class App extends React.Component {
         this.state = {
             products: [],
             filters: null,
-            selectedFilters: {},
-            sort: 'relevance',
+            selectedFilters: {
+            },
+            sort: 'position',
             zoom: 1,
             dropdown: null,
             userFiltersSelected: false,
-            userFiltersSubmited: false
+            userFiltersSubmited: false,
+        };
+
+        this.defaults = {
+            zoomRange: {
+                min: 0,
+                max: 2
+            },
+            uriHashPrefix: 'categoryFilters!'
         };
 
         this.client = new ApolloClient({
             uri: this.props.parameter.gql
         });
-
-        this.PRODUCTS = gql`
-        { 
-          category(id: ${this.props.parameter.categoryId}) {
-            products {
-              total_count
-              page_info {
-                current_page
-                page_size
-                total_pages
-              }
-              items {
-                image {
-                        url
-                        label
-                }
-              sku
-              name
-              url_key
-              special_price
-              price {
-                minimalPrice {
-                  amount {
-                    currency
-                    value
-                  }
-                }
-                regularPrice {
-                  amount {
-                    currency
-                    value
-                  }
-                }
-              }
-          }
-        }
-        }
-        }
-        `;
-        this.FILTERS = gql`
-        {
-        discountCatalogFilters(category_id: ${this.props.parameter.categoryId}) {
-            filters {
-              name
-              filter_items_count
-              request_var
-              filter_items {
-                label
-                value_string
-                items_count
-              }
-            }
-          } 
-        }
-        `;
     }
 
     componentDidMount() {
-        this.loadInitialProducts();
-        this.loadFilters();
+        this.getFilters();
         this.filtersFromUri();
     }
 
     onSetSorters(sort) {
-        this.setState({sort: sort});
+        this.setState({sort: sort}, () => {
+            this.onFiltersSubmit();
+        });
     }
 
-    handleClick() {
-
-    }
-
+    // TODO: consider to change name if this method to something like "get products"
     filtersFromUri() {
-        const regex = RegExp(uriHashPrefix);
+        const regex = RegExp(this.defaults.uriHashPrefix);
         if(regex.test(location.hash)) {
             let str = location.hash.replace(regex, '');
             str = str.replace('#', '');
             if(str.length > 0) {
+                let zoom = this.state.zoom;
+                let sort = this.state.sort;
+
                 const recoveredFiltersState = this.decodeFilterUri(str);
+
+                if(recoveredFiltersState['z']) {
+                    zoom = parseInt(recoveredFiltersState['z'][0]);
+                    delete recoveredFiltersState['z'];
+                }
+
+                if(recoveredFiltersState['s']) {
+                    sort = recoveredFiltersState['s'][0];
+                    delete recoveredFiltersState['s'];
+                }
+
                 this.setState({
-                    selectedFilters: recoveredFiltersState
-                })
+                    selectedFilters: recoveredFiltersState,
+                    zoom,
+                    sort
+                }, () => { this.getProducts() })
             }
+        } else {
+            this.getProducts();
         }
     }
 
@@ -210,15 +174,12 @@ class App extends React.Component {
 
     /** Wysyła zapytanie GQL **/
     onFiltersSubmit() {
-        // TODO: ogarnąc stany HASH'a
-        alert('submited!');
         const queryString = this.encodeFilterUri();
-        //const decoded = this.decodeFilterUri(queryString);
-        location.hash = uriHashPrefix + queryString;
+        location.hash = this.defaults.uriHashPrefix + (queryString ? queryString + '&': '') + `s=${this.state.sort}&z=${this.state.zoom}`;
+        this.getProducts();
     }
 
     onFiltersClear() {
-        // TODO: ogarnąc stany HASH'a
         location.hash = '';
         this.setState({
             selectedFilters: {},
@@ -235,27 +196,34 @@ class App extends React.Component {
 
     onSetZoom(value) {
         const currentZoom = this.state.zoom;
-        if(value > 0 && currentZoom < zoomRange.max || value < 0 && currentZoom > zoomRange.min) {
+        if(value > 0 && currentZoom < this.defaults.zoomRange.max || value < 0 && currentZoom > this.defaults.zoomRange.min) {
             this.setState({
                 zoom: value + currentZoom
-            });
+            }, () => { this.onFiltersSubmit()});
         }
     }
 
-    loadInitialProducts() {
+    getProducts() {
         this.client
             .query({
-                query: this.PRODUCTS
+                query: prepareProductsQuery({
+                    categoryId: this.props.parameter.categoryId,
+                    selectedFilters: this.state.selectedFilters,
+                    zoom: this.state.zoom,
+                    sort: this.state.sort
+                })
             })
             .then(result => {
-                this.setState({products: result.data.category.products.items});
+                this.setState({products: result.data["discountFilteredProducts"].items});
             });
     }
 
-    loadFilters() {
+    getFilters() {
         this.client
             .query({
-                query: this.FILTERS
+                query: prepareFiltersQuery({
+                    categoryId: this.props.parameter.categoryId
+                })
             })
             .then(result => {
                 this.setState({filters: result.data["discountCatalogFilters"].filters});

@@ -2,57 +2,39 @@ import React from 'react'
 import PropTypes from 'prop-types';
 import InputRange from 'react-input-range';
 
-class PriceSlider extends React.Component {
+const PriceSlider = (props) => {
 
-    constructor(props) {
-        super(props);
-
-        this.onPriceSelectorChange = this.onPriceSelectorChange.bind(this);
-
-        const priceRange = this.props.filter["filter_items"].reduce((acc, cur) => {
-            acc[cur.label] = parseInt(cur["value_string"]);
-            return acc;
-        }, {});
-
-        this.state = {
-            priceRange,
-            currentRangeSelection: priceRange,
-        };
+    const onPriceSelectorChange = (value) => {
+        props.onFiltersUpdate(value, props.filter["name"]);
     }
 
-    componentDidMount() {
-        const { selectedFilter } = this.props;
-        if(selectedFilter.length === 2) {
-            this.setState({
-                currentRangeSelection: {
-                    min: parseInt(selectedFilter[0]),
-                    max: parseInt(selectedFilter[1])
-                }
-            });
-        }
+    const isPriceSet = () => {
+        const res = Object.keys(props.price).length === 0 && props.price.constructor === Object;
+        return !res;
     }
 
-    onPriceSelectorChange(value) {
-        this.props.onFiltersUpdate(value, this.props.filter["name"]);
-    }
+    const baseRange = props.filter["filter_items"].reduce((acc, cur) => {
+        acc[cur.label] = parseInt(cur["value_string"]);
+        return acc;
+    }, {});
 
-    render() {
-        return <div className={'filter-box price-filter'}>
-            <div className={'header'}>{'Price'}</div>
-            <InputRange
-                maxValue={this.state.priceRange["max"]}
-                minValue={this.state.priceRange["min"]}
-                value={this.state.currentRangeSelection}
-                onChange={(value) => this.setState({ currentRangeSelection: value })}
-                onChangeComplete={() => this.onPriceSelectorChange(this.state.currentRangeSelection)} />
-        </div>
-    }
+    const price = !isPriceSet() ? baseRange : props.price;
+
+    return <div className={'filter-box price-filter'}>
+        <div className={'header'}>{'Price'}</div>
+        <InputRange
+            minValue={baseRange.min}
+            maxValue={baseRange.max}
+            value={price}
+            onChange={onPriceSelectorChange}
+             />
+    </div>
 }
 
 PriceSlider.propTypes = {
     filter: PropTypes.object.isRequired,
     onFiltersUpdate: PropTypes.func.isRequired,
-    selectedFilter: PropTypes.array
+    price: PropTypes.object
 };
 
 export default PriceSlider;

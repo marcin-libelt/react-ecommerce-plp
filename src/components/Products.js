@@ -6,9 +6,13 @@ const Products = function(props) {
 
     const { products } = props;
 
-    return <ul className="products">
-        {products.map((item, index) => <ProductItem key={index} details={item} />)}
-    </ul>
+    if(products.length > 0) {
+        return <ul className="products">
+            {products.map((item, index) => <ProductItem key={index} details={item}/>)}
+        </ul>
+    } else {
+        return <div>Sorry no products found :(</div>
+    }
 };
 
 Products.propTypes = {

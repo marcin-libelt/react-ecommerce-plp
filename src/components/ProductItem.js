@@ -8,27 +8,27 @@ class ProductItem extends React.Component {
 
   render() {
 
-      const { name, sku, url_suffix, url_key, price, image } = this.props.details;
+      const { name, canonical_url, price, special_price, category_image, small_image } = this.props.details;
 
       const styles = {
         textDecoration: 'line-through'
       };
 
-      const isSpecialPrice = price.minimalPrice.amount.value < price.regularPrice.amount.value;
+      const isSpecialPrice = special_price && special_price.amount.value < price.regularPrice.amount.value;
       const clsName = isSpecialPrice ? 'price-box is-special-price' : 'price-box';
 
-      const priceBox = <div className={clsName}>
+        const priceBox = <div className={clsName}>
                         <p className="regularPrice" style={ isSpecialPrice ? styles : {}}>
                             {price.regularPrice.amount.value} {price.regularPrice.amount.currency}
                         </p>
                         { isSpecialPrice ? <p className="specialPrice">
-                            {price.minimalPrice.amount.value} {price.minimalPrice.amount.currency}
+                            {special_price.amount.value} {special_price.amount.currency}
                         </p> : '' }
                      </div>;
 
         return <li className={'product-item'}>
-          <a href={url_key + '.html'}>
-            <img src={image.url} alt={image.label} />
+          <a href={canonical_url}>
+            <img src={category_image} alt={small_image.label} />
             <div className={'product-details'}>{name} {priceBox}</div>
           </a>
       </li>
