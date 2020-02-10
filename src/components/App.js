@@ -65,7 +65,7 @@ class App extends React.Component {
             if(str.length > 0) {
                 let zoom = this.state.zoom;
                 let sort = this.state.sort;
-
+                let filtersSubmitedFlag = false;
                 const recoveredFiltersState = this.decodeFilterUri(str);
 
                 if(recoveredFiltersState['z']) {
@@ -78,7 +78,14 @@ class App extends React.Component {
                     delete recoveredFiltersState['s'];
                 }
 
+                // after page load some filters are available or not
+                // if the filters are existed - make CLEAR button visible
+                if(Object.keys(recoveredFiltersState).length) {
+                    filtersSubmitedFlag = true;
+                }
+
                 this.setState({
+                    userFiltersSubmited: filtersSubmitedFlag,
                     selectedFilters: recoveredFiltersState,
                     zoom,
                     sort
@@ -154,7 +161,22 @@ class App extends React.Component {
     }
 
     afterFiltersAction() {
-        //console.log(this.isAnyFiltersApplied());
+        //make APPLY button visible
+        let flag;
+
+        if(!this.state.userFiltersSubmited) {
+            if(this.isAnyFiltersApplied()) {
+                flag = true;
+            } else {
+                flag = false;
+            }
+        } else {
+            flag = true;
+        }
+
+        this.setState({
+            userFiltersSelected: flag
+        });
     }
 
     isAnyFiltersApplied = () => !!Object.keys(this.state.selectedFilters).length;
@@ -175,12 +197,12 @@ class App extends React.Component {
     /** Wysyła zapytanie GQL **/
     onFiltersSubmit() {
         const queryString = this.encodeFilterUri();
+        console.log(queryString);
         location.hash = this.defaults.uriHashPrefix + (queryString ? queryString + '&': '') + `s=${this.state.sort}&z=${this.state.zoom}`;
         this.getProducts();
     }
 
     onFiltersClear() {
-        location.hash = '';
         this.setState({
             selectedFilters: {},
             userFiltersSubmited: false,
@@ -214,7 +236,11 @@ class App extends React.Component {
                 })
             })
             .then(result => {
-                this.setState({products: result.data["discountFilteredProducts"].items});
+                this.setState({
+                    products: result.data["discountFilteredProducts"].items,
+                    userFiltersSelected: false,
+                    userFiltersSubmited: this.isAnyFiltersApplied()
+                });
             });
     }
 
