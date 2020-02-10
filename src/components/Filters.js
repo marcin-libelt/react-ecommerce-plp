@@ -44,7 +44,8 @@ class Filters extends React.Component {
             filters: null,
             filtersCollapsedStatus: {},
             filtersDropdownVisible: false,
-            sortDropdownVisible: false
+            sortDropdownVisible: false,
+            currencySymbol: ""
         };
 
         this.client = new ApolloClient({
@@ -53,7 +54,7 @@ class Filters extends React.Component {
 
         this.FILTERS = gql`
         {
-        discountCatalogFilters(category_id: ${this.props.gqlParams.categoryId}) {
+          discountCatalogFilters(category_id: ${this.props.gqlParams.categoryId}) {
             filters {
               name
               filter_items_count
@@ -65,6 +66,9 @@ class Filters extends React.Component {
               }
             }
           } 
+          currency {
+                base_currency_symbol
+          }
         }
         `;
     }
@@ -75,7 +79,10 @@ class Filters extends React.Component {
                 query: this.FILTERS
             })
             .then(result => {
-                this.setState({filters: result.data["discountCatalogFilters"].filters});
+                this.setState({
+                    filters: result.data["discountCatalogFilters"].filters,
+                    currencySymbol: result.data["currency"]["base_currency_symbol"]
+                });
             });
     }
 
@@ -147,6 +154,7 @@ class Filters extends React.Component {
 
         return isOnePrice ? null : <PriceSlider filter={priceFilter}
                      price={this.getPriceForInput()}
+                     currencySymbol={this.state.currencySymbol}
                      onFiltersUpdate={this.props.onFiltersUpdate} />;
     }
 

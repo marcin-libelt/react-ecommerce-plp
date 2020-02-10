@@ -2,39 +2,61 @@ import React from 'react'
 import PropTypes from 'prop-types';
 import InputRange from 'react-input-range';
 
-const PriceSlider = (props) => {
+class PriceSlider extends React.Component  {
 
-    const onPriceSelectorChange = (value) => {
-        props.onFiltersUpdate(value, props.filter["name"]);
-    }
+    constructor(props) {
+        super(props);
 
-    const isPriceSet = () => {
-        const res = Object.keys(props.price).length === 0 && props.price.constructor === Object;
+        this.state = {
+            min: 0,
+            max: 0
+        }
+    };
+
+    onPriceSelectorChange = (value) => {
+        this.setState({
+            min: value.min,
+            max: value.max
+        });
+        this.props.onFiltersUpdate(value, this.props.filter["name"]);
+    };
+
+    isPriceSet = () => {
+        const res = Object.keys(this.props.price).length === 0 && this.props.price.constructor === Object;
         return !res;
-    }
+    };
 
-    const baseRange = props.filter["filter_items"].reduce((acc, cur) => {
+    baseRange = this.props.filter["filter_items"].reduce((acc, cur) => {
         acc[cur.label] = parseInt(cur["value_string"]);
         return acc;
     }, {});
 
-    const price = !isPriceSet() ? baseRange : props.price;
+    render() {
 
-    return <div className={'filter-box price-filter'}>
-        <div className={'header'}>{'Price'}</div>
-        <InputRange
-            minValue={baseRange.min}
-            maxValue={baseRange.max}
-            value={price}
-            onChange={onPriceSelectorChange}
-             />
-    </div>
+        const priceValue = !this.isPriceSet() ? this.baseRange : this.props.price;
+        const labelMin = this.state.min || priceValue.min;
+        const labelMax = this.state.max || priceValue.max;
+
+        return <div className={'filter-box price-filter'}>
+            <div className={'header'}>{'Price'}</div>
+            <span className={'label-min'}>{this.props.currencySymbol}{labelMin}</span>
+            <InputRange
+                minValue={this.baseRange.min}
+                maxValue={this.baseRange.max}
+                value={priceValue}
+                onChange={this.onPriceSelectorChange}
+            />
+            <span className={'label-max'}>{this.props.currencySymbol}{labelMax}</span>
+        </div>
+    }
+
 }
 
 PriceSlider.propTypes = {
     filter: PropTypes.object.isRequired,
     onFiltersUpdate: PropTypes.func.isRequired,
-    price: PropTypes.object
+    price: PropTypes.object,
+    currencySymbol: PropTypes.string.isRequired
 };
 
 export default PriceSlider;
