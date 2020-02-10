@@ -139,19 +139,26 @@ class Filters extends React.Component {
                 max: parseInt(this.props.selectedFilters["price"][1])
             }
         }
+    };
+
+    renderPriceFilter() {
+        const priceFilter = this.getPriceFilterItem("price");
+        const isOnePrice = priceFilter.filter_items[0]["value_string"] === priceFilter.filter_items[1]["value_string"];
+
+        return isOnePrice ? null : <PriceSlider filter={priceFilter}
+                     price={this.getPriceForInput()}
+                     onFiltersUpdate={this.props.onFiltersUpdate} />;
     }
 
     render() {
-        const { selectedFilters, onFiltersUpdate } = this.props;
+        const { onFiltersUpdate } = this.props;
         const clsNamesArr = [
             'filters-container',
             this.props.hidden ? 'mobile-hidden' : ''
         ];
         if(this.state.filters !== null) {
             return <div className={clsNamesArr.join(' ')}>
-                    <PriceSlider filter={this.getPriceFilterItem("price")}
-                                 price={this.getPriceForInput()}
-                                 onFiltersUpdate={onFiltersUpdate} />
+                    {this.renderPriceFilter()}
                     {this.createFilters()}
                 </div>
         } else {
