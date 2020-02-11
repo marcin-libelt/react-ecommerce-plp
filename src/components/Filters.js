@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ApolloClient, { gql } from 'apollo-boost';
 import List from "./filters/List";
 import PriceSlider from "./filters/PriceSlider";
+import LoaderMask from "./LoaderMask";
 
 const components = {
     filter_color: List,
@@ -170,7 +171,7 @@ class Filters extends React.Component {
                     {this.createFilters()}
                 </div>
         } else {
-            return <div className={'loading'}>Loading...</div>
+            return <LoaderMask />
         }
     }
 }

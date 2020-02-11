@@ -7,6 +7,7 @@ import Filters from "./Filters";
 import TopCategories from "./TopCategories";
 import MobileDropdownTogglers from './MobileDropdownTogglers';
 import { prepareProductsQuery, prepareFiltersQuery } from '../helpers/queryParameters'
+import LoaderMask from "./LoaderMask";
 
 class App extends React.Component {
 
@@ -30,6 +31,7 @@ class App extends React.Component {
             dropdown: null,
             userFiltersSelected: false,
             userFiltersSubmited: false,
+            productLoadingComplete: true
         };
 
         this.defaults = {
@@ -196,8 +198,10 @@ class App extends React.Component {
 
     /** Wysyła zapytanie GQL **/
     onFiltersSubmit() {
+        this.setState({
+            productLoadingComplete: false
+        });
         const queryString = this.encodeFilterUri();
-        console.log(queryString);
         location.hash = this.defaults.uriHashPrefix + (queryString ? queryString + '&': '') + `s=${this.state.sort}&z=${this.state.zoom}`;
         this.getProducts();
     }
@@ -237,6 +241,7 @@ class App extends React.Component {
             })
             .then(result => {
                 this.setState({
+                    productLoadingComplete: true,
                     products: result.data["discountFilteredProducts"].items,
                     userFiltersSelected: false,
                     userFiltersSubmited: this.isAnyFiltersApplied()
@@ -282,12 +287,12 @@ class App extends React.Component {
                                      currentSorter={this.state.sort}
                                      hidden={this.state.dropdown !== "sorters"}
                         />
-                        <Products products={this.state.products}/>
+                        <Products products={this.state.products} loadingComplete={this.state.productLoadingComplete}/>
                     </div>
                 </div>
             );
         } else {
-            return <div className={'loading'}>{'Loading...'}</div>
+            return <LoaderMask />
         }
     }
 }
