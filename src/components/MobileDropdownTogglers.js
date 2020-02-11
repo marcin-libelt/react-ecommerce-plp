@@ -1,8 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import FiltersActions from "./FiltersActions";
 
 const MobileDropdownTogglers = (props) => {
+
+    const [isLocked, setIsLocked] = useState(false);
+    let vH = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    const elem = document.querySelector('.column.main');
+
+    useEffect(() => {
+        document.addEventListener('scroll', setButtonPosition);
+        window.addEventListener('resize', () => {
+            vH = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        });
+    });
+
+    const setButtonPosition = () => {
+        const result = (vH >= elem.getBoundingClientRect().bottom);
+        setIsLocked(result);
+    };
 
     const clsForFiltersArr = [
         'for-filters',
@@ -14,7 +30,12 @@ const MobileDropdownTogglers = (props) => {
         props.dropdownStatus === 'sorters' ? 'active' : ''
     ];
 
-    return  <div className={'mobile-triggers'}>
+    const clsNamesArr = [
+        'mobile-triggers',
+        isLocked ? 'un-fixed' : ''
+    ];
+
+    return  <div className={clsNamesArr.join(' ')}>
         <div className={clsForFiltersArr.join(' ')}>
             <div className={'label'}>{'Filters'}</div>
             <FiltersActions onFiltersSubmit={props.onFiltersSubmit}
