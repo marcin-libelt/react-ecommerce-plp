@@ -32,7 +32,8 @@ class App extends React.Component {
             userFiltersSelected: false,
             userFiltersSubmited: false,
             productLoadingComplete: true,
-            currentPage: 1
+            currentPage: 1,
+            isSidebarFixed: false
         };
 
         this.defaults = {
@@ -40,6 +41,7 @@ class App extends React.Component {
                 min: 0,
                 max: 2
             },
+            autoLoadOffset: 300,
             chunkSize: 18, // initial products count = page size
             uriHashPrefix: 'categoryFilters!'
         };
@@ -47,6 +49,7 @@ class App extends React.Component {
         this.isLocked = false;
         this.totalPages = 0;
         this.viewportHeigh = 0;
+        this.wrapperElement = document.querySelector('.column.main');
 
         this.client = new ApolloClient({
             uri: this.props.parameter.gql
@@ -66,20 +69,21 @@ class App extends React.Component {
     }
 
     pagerScrollHandler = () => {
-        const elem = document.querySelector('.column.main');
 
-        if(this.totalPages === this.state.currentPage) {
-            document.removeEventListener('scroll', this.pagerScrollHandler);
-            window.removeEventListener('resize', this.viewportResizeHandler);
-        }
-
-        if(!this.isLocked) {
-            if (this.viewportHeigh >= elem.getBoundingClientRect().bottom) {
+        if(!this.isLocked && this.totalPages > this.state.currentPage) {
+            if (this.viewportHeigh >= this.wrapperElement.getBoundingClientRect().bottom - this.defaults.autoLoadOffset) {
                 this.isLocked = true;
                 this.setState(prevState => ({
                     currentPage: prevState.currentPage + 1
                 }), () => this.getProducts(true));
             }
+        }
+
+        const result = this.viewportHeigh >= this.wrapperElement.getBoundingClientRect().bottom;
+        if(result !== this.state.isSidebarFixed) {
+            this.setState({
+                isSidebarFixed: !this.state.isSidebarFixed
+            })
         }
     };
 
@@ -287,12 +291,14 @@ class App extends React.Component {
             .then(result => {
                 let products = [];
 
+                console.log(result.data, this.totalPages);
+                this.totalPages = result.data["discountFilteredProducts"]["page_info"]["total_pages"];
+
                 if(loadNextPage) { // concat product items
                     const oldProducts = [...this.state.products];
                     products = oldProducts.concat(result.data["discountFilteredProducts"].items);
                 } else { // simply load product items ( replace )
                     products = result.data["discountFilteredProducts"].items;
-                    this.totalPages = result.data["discountFilteredProducts"]["page_info"]["total_pages"];
                 }
 
                 this.setState({
@@ -317,17 +323,25 @@ class App extends React.Component {
     }
 
     render() {
+
+        const clsNamesArr = [
+            'react-category-container',
+            this.state.isSidebarFixed ? 'un-fixed' : ''
+        ];
+
         if(this.state.filters !== null) {
             return (
-                <div className={'react-category-container'}>
+                <div className={clsNamesArr.join(' ')}>
                     <div className={'filters-block'}>
-                        <TopCategories categories={this.props.parameter.topCategories}/>
-                        <Filters filters={this.state.filters}
-                                 selectedFilters={this.state.selectedFilters}
-                                 onFiltersUpdate={this.onFiltersUpdate}
-                                 gqlParams={this.props.parameter}
-                                 hidden={this.state.dropdown !== "filters"}
-                        />
+                        <div className={'inner-container'}>
+                            <TopCategories categories={this.props.parameter.topCategories}/>
+                            <Filters filters={this.state.filters}
+                                     selectedFilters={this.state.selectedFilters}
+                                     onFiltersUpdate={this.onFiltersUpdate}
+                                     gqlParams={this.props.parameter}
+                                     hidden={this.state.dropdown !== "filters"}
+                            />
+                        </div>
                         <MobileDropdownTogglers onFiltersSubmit={this.onFiltersSubmit}
                                                 onFiltersClear={this.onFiltersClear}
                                                 onDropdownToggle={this.onDropdownToggle}
