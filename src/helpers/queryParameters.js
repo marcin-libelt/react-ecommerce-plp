@@ -2,7 +2,7 @@ import ApolloClient, { gql } from 'apollo-boost';
 
 export const prepareProductsQuery = (params) => {
 
-    const { selectedFilters, categoryId, sort } = params;
+    const { selectedFilters, categoryId, sort, pageSize, currentPage } = params;
     let cumulativeArr = [];
     let sorter = "";
     if(selectedFilters) {
@@ -49,8 +49,8 @@ export const prepareProductsQuery = (params) => {
         {  
           discountFilteredProducts( 
             category_id: ${categoryId}
-            pageSize: 25    
-            currentPage: 1
+            pageSize: ${pageSize}    
+            currentPage: ${currentPage}
             sort: {
               ${sorter}
             }

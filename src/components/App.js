@@ -31,7 +31,8 @@ class App extends React.Component {
             dropdown: null,
             userFiltersSelected: false,
             userFiltersSubmited: false,
-            productLoadingComplete: true
+            productLoadingComplete: true,
+            currentPage: 1
         };
 
         this.defaults = {
@@ -39,8 +40,13 @@ class App extends React.Component {
                 min: 0,
                 max: 2
             },
+            chunkSize: 18, // initial products count = page size
             uriHashPrefix: 'categoryFilters!'
         };
+
+        this.isLocked = false;
+        this.totalPages = 0;
+        this.viewportHeigh = 0;
 
         this.client = new ApolloClient({
             uri: this.props.parameter.gql
@@ -50,6 +56,35 @@ class App extends React.Component {
     componentDidMount() {
         this.getFilters();
         this.filtersFromUri();
+        this.initPager();
+    }
+
+    initPager() {
+        this.viewportHeigh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        document.addEventListener('scroll', this.pagerScrollHandler);
+        window.addEventListener('resize', this.viewportResizeHandler);
+    }
+
+    pagerScrollHandler = () => {
+        const elem = document.querySelector('.column.main');
+
+        if(this.totalPages === this.state.currentPage) {
+            document.removeEventListener('scroll', this.pagerScrollHandler);
+            window.removeEventListener('resize', this.viewportResizeHandler);
+        }
+
+        if(!this.isLocked) {
+            if (this.viewportHeigh >= elem.getBoundingClientRect().bottom) {
+                this.isLocked = true;
+                this.setState(prevState => ({
+                    currentPage: prevState.currentPage + 1
+                }), () => this.getProducts(true));
+            }
+        }
+    };
+
+    viewportResizeHandler = () => {
+        this.viewportHeigh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
     }
 
     onSetSorters(sort) {
@@ -196,7 +231,6 @@ class App extends React.Component {
         return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
     }).join('&');
 
-    /** Wysyła zapytanie GQL **/
     onFiltersSubmit() {
         this.setState({
             productLoadingComplete: false
@@ -229,23 +263,44 @@ class App extends React.Component {
         }
     }
 
-    getProducts() {
+    getProducts(loadNextPage = false) {
+
+        let pageSize = this.defaults.chunkSize;
+        let currentPage = this.state.currentPage;
+
+        if(!loadNextPage) {
+            pageSize = this.defaults.chunkSize * this.state.currentPage;
+            currentPage = 1;
+        }
+
         this.client
             .query({
                 query: prepareProductsQuery({
                     categoryId: this.props.parameter.categoryId,
                     selectedFilters: this.state.selectedFilters,
                     zoom: this.state.zoom,
-                    sort: this.state.sort
+                    sort: this.state.sort,
+                    pageSize,
+                    currentPage
                 })
             })
             .then(result => {
+                let products = [];
+
+                if(loadNextPage) { // concat product items
+                    const oldProducts = [...this.state.products];
+                    products = oldProducts.concat(result.data["discountFilteredProducts"].items);
+                } else { // simply load product items ( replace )
+                    products = result.data["discountFilteredProducts"].items;
+                    this.totalPages = result.data["discountFilteredProducts"]["page_info"]["total_pages"];
+                }
+
                 this.setState({
                     productLoadingComplete: true,
-                    products: result.data["discountFilteredProducts"].items,
+                    products: products,
                     userFiltersSelected: false,
                     userFiltersSubmited: this.isAnyFiltersApplied()
-                });
+                }, () => { this.isLocked = false});
             });
     }
 

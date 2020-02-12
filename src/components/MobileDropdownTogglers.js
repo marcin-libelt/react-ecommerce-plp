@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import FiltersActions from "./FiltersActions";
 
-const MobileDropdownTogglers = (props) => {
+function MobileDropdownTogglers(props) {
 
     const [isLocked, setIsLocked] = useState(false);
     let vH = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
