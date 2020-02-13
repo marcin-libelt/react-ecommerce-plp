@@ -250,6 +250,7 @@ class App extends React.Component {
     }).join('&');
 
     onFiltersSubmit() {
+        this.scrollToPosition();
         this.setState({
             productLoadingComplete: false
         });
@@ -318,7 +319,6 @@ class App extends React.Component {
                 }
 
                 this.setState({
-                    productLoadingComplete: true,
                     products: products,
                     userFiltersSelected: false,
                     userFiltersSubmited: this.isAnyFiltersApplied()
@@ -331,9 +331,7 @@ class App extends React.Component {
     }
 
     scrollToPosition() {
-        if(sessionStorage.getItem(this.defaults.sessionScrollKey)) {
-            window.scrollTo(0, parseInt(sessionStorage.getItem(this.defaults.sessionScrollKey)) || 0);
-        }
+        window.scrollTo(0, parseInt(sessionStorage.getItem(this.defaults.sessionScrollKey)) || 0);
     }
 
     afterGetProducts(scrollTo) {
@@ -348,6 +346,9 @@ class App extends React.Component {
                 if(scrollTo) {
                     this.scrollToPosition();
                 }
+                this.setState({
+                    productLoadingComplete: true
+                });
             }
         }, 500);
     }
