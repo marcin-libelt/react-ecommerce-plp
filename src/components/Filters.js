@@ -181,7 +181,6 @@ Filters.propTypes = {
     gqlParams: PropTypes.object.isRequired,
     onFiltersUpdate: PropTypes.func.isRequired,
     selectedFilters: PropTypes.object.isRequired,
-    dropdownStatus: PropTypes.bool,
     hidden: PropTypes.bool
 };
 

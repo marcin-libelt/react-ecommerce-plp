@@ -252,7 +252,8 @@ class App extends React.Component {
     onFiltersSubmit() {
         this.scrollToPosition();
         this.setState({
-            productLoadingComplete: false
+            productLoadingComplete: false,
+            dropdown: null
         });
         this.updateUri();
         this.getProducts();
