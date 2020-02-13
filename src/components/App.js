@@ -331,7 +331,9 @@ class App extends React.Component {
     }
 
     scrollToPosition() {
-        window.scrollTo(0, parseInt(sessionStorage.getItem(this.defaults.sessionScrollKey)) || 0);
+        if(sessionStorage.getItem(this.defaults.sessionScrollKey)) {
+            window.scrollTo(0, parseInt(sessionStorage.getItem(this.defaults.sessionScrollKey)) || 0);
+        }
     }
 
     afterGetProducts(scrollTo) {
