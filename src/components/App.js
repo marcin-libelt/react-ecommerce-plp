@@ -43,7 +43,8 @@ class App extends React.Component {
             },
             autoLoadOffset: 300,
             chunkSize: 18, // initial products count = page size
-            uriHashPrefix: 'categoryFilters!'
+            uriHashPrefix: 'categoryFilters!',
+            sessionScrollKey: 'plp-scroll'
         };
 
         this.isLocked = false;
@@ -75,7 +76,10 @@ class App extends React.Component {
                 this.isLocked = true;
                 this.setState(prevState => ({
                     currentPage: prevState.currentPage + 1
-                }), () => this.getProducts(true));
+                }), () => {
+                    this.getProducts(true);
+                    this.updateUri();
+                });
             }
         }
 
@@ -85,6 +89,8 @@ class App extends React.Component {
                 isSidebarFixed: !this.state.isSidebarFixed
             })
         }
+
+        sessionStorage.removeItem(this.defaults.sessionScrollKey);
     };
 
     viewportResizeHandler = () => {
@@ -106,6 +112,7 @@ class App extends React.Component {
             if(str.length > 0) {
                 let zoom = this.state.zoom;
                 let sort = this.state.sort;
+                let page = this.state.currentPage;
                 let filtersSubmitedFlag = false;
                 const recoveredFiltersState = this.decodeFilterUri(str);
 
@@ -119,6 +126,11 @@ class App extends React.Component {
                     delete recoveredFiltersState['s'];
                 }
 
+                if(recoveredFiltersState['p']) {
+                    page = parseInt(recoveredFiltersState['p'][0]);
+                    delete recoveredFiltersState['p'];
+                }
+
                 // after page load some filters are available or not
                 // if the filters are existed - make CLEAR button visible
                 if(Object.keys(recoveredFiltersState).length) {
@@ -129,10 +141,12 @@ class App extends React.Component {
                     userFiltersSubmited: filtersSubmitedFlag,
                     selectedFilters: recoveredFiltersState,
                     zoom,
-                    sort
-                }, () => { this.getProducts() })
+                    sort,
+                    currentPage: page
+                }, () => { this.getProducts(false, true) })
             }
         } else {
+            // normal product Load without filters nor sorters
             this.getProducts();
         }
     }
@@ -239,9 +253,13 @@ class App extends React.Component {
         this.setState({
             productLoadingComplete: false
         });
-        const queryString = this.encodeFilterUri();
-        location.hash = this.defaults.uriHashPrefix + (queryString ? queryString + '&': '') + `s=${this.state.sort}&z=${this.state.zoom}`;
+        this.updateUri();
         this.getProducts();
+    }
+
+    updateUri() {
+        const queryString = this.encodeFilterUri();
+        location.hash = this.defaults.uriHashPrefix + (queryString ? queryString + '&': '') + `s=${this.state.sort}&z=${this.state.zoom}&p=${this.state.currentPage}`;
     }
 
     onFiltersClear() {
@@ -267,7 +285,7 @@ class App extends React.Component {
         }
     }
 
-    getProducts(loadNextPage = false) {
+    getProducts(loadNextPage = false, scrollToPosition = false) {
 
         let pageSize = this.defaults.chunkSize;
         let currentPage = this.state.currentPage;
@@ -290,8 +308,6 @@ class App extends React.Component {
             })
             .then(result => {
                 let products = [];
-
-                console.log(result.data, this.totalPages);
                 this.totalPages = result.data["discountFilteredProducts"]["page_info"]["total_pages"];
 
                 if(loadNextPage) { // concat product items
@@ -306,8 +322,32 @@ class App extends React.Component {
                     products: products,
                     userFiltersSelected: false,
                     userFiltersSubmited: this.isAnyFiltersApplied()
-                }, () => { this.isLocked = false});
+                }, () => { this.afterGetProducts(scrollToPosition) });
             });
+    }
+
+    clickListenerForProducts = event => {
+        sessionStorage.setItem(this.defaults.sessionScrollKey, document.documentElement.scrollTop || document.body.scrollTop);
+    }
+
+    scrollToPosition() {
+        window.scrollTo(0, parseInt(sessionStorage.getItem(this.defaults.sessionScrollKey)) || 0);
+    }
+
+    afterGetProducts(scrollTo) {
+        this.isLocked = false;
+
+        setTimeout(() => {
+            // reset event listener
+            if("undefined" != typeof document.querySelectorAll('ul.products')[0]) {
+                document.querySelectorAll('ul.products')[0].removeEventListener('click', this.clickListenerForProducts);
+                document.querySelectorAll('ul.products')[0].addEventListener('click', this.clickListenerForProducts);
+
+                if(scrollTo) {
+                    this.scrollToPosition();
+                }
+            }
+        }, 500);
     }
 
     getFilters() {
