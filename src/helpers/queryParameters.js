@@ -75,6 +75,12 @@ export const prepareProductsQuery = (params) => {
                     currency
                   }
                 }
+                minimalPrice {
+                  amount {
+                    value
+                    currency
+                  }
+                }
               }
               small_image {
                  label

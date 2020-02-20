@@ -8,28 +8,26 @@ class ProductItem extends React.Component {
 
   render() {
 
-      const { name, canonical_url, price, special_price, category_image, small_image } = this.props.details;
+      const { name, canonical_url, price, category_image, small_image } = this.props.details;
+      const isSpecialPrice = price.minimalPrice.amount.value < price.regularPrice.amount.value;
+      const clsNameArr = [
+          'price-box',
+          isSpecialPrice ? 'is-special-price' : ''
+      ];
 
-      const styles = {
-        textDecoration: 'line-through'
-      };
+      const percentage = isSpecialPrice ? (price.minimalPrice.amount.value / price.regularPrice.amount.value) * 100 : 0;
+      const priceBox = <div className={clsNameArr.join(" ")}>
+        {name}
+        <span className="specialPrice" >{ price.minimalPrice.amount.value }</span>
+        { isSpecialPrice ? <p className={'regularPrice'}><span className={'old-price'}>{ price.regularPrice.amount.value }</span>{ percentage + '% off'}</p> : ''}
+      </div>;
 
-      const isSpecialPrice = special_price && special_price.amount.value < price.regularPrice.amount.value;
-      const clsName = isSpecialPrice ? 'price-box is-special-price' : 'price-box';
-
-        const priceBox = <div className={clsName}>
-                        <p className="regularPrice" style={ isSpecialPrice ? styles : {}}>
-                            {price.regularPrice.amount.value} {price.regularPrice.amount.currency}
-                        </p>
-                        { isSpecialPrice ? <p className="specialPrice">
-                            {special_price.amount.value} {special_price.amount.currency}
-                        </p> : '' }
-                     </div>;
-
-        return <li className={'product-item'}>
+      return <li className={'product-item'}>
           <a href={canonical_url}>
             <img src={category_image} alt={small_image.label} />
-            <div className={'product-details'}>{name} {priceBox}</div>
+            <div className={'product-details'}>
+                {priceBox}
+            </div>
           </a>
       </li>
   }
