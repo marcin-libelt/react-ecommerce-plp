@@ -33,7 +33,8 @@ class App extends React.Component {
             userFiltersSubmited: false,
             productLoadingComplete: true,
             currentPage: 1,
-            isSidebarFixed: false
+            isSidebarFixed: false,
+            currencySymbol: ""
         };
 
         this.defaults = {
@@ -322,7 +323,8 @@ class App extends React.Component {
                 this.setState({
                     products: products,
                     userFiltersSelected: false,
-                    userFiltersSubmited: this.isAnyFiltersApplied()
+                    userFiltersSubmited: this.isAnyFiltersApplied(),
+                    currencySymbol: result.data["currency"]["base_currency_symbol"]
                 }, () => { this.afterGetProducts(scrollToPosition) });
             });
     }
@@ -400,7 +402,9 @@ class App extends React.Component {
                                      currentSorter={this.state.sort}
                                      hidden={this.state.dropdown !== "sorters"}
                         />
-                        <Products products={this.state.products} loadingComplete={this.state.productLoadingComplete}/>
+                        <Products products={this.state.products}
+                                  currencySymbol={this.state.currencySymbol}
+                                  loadingComplete={this.state.productLoadingComplete}/>
                     </div>
                 </div>
             );

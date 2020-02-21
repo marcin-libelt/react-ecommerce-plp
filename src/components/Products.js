@@ -5,12 +5,14 @@ import LoaderMask from "./LoaderMask";
 
 const Products = function(props) {
 
-    const { products, loadingComplete } = props;
+    const { products, currencySymbol, loadingComplete } = props;
 
     if(loadingComplete) {
         if(products.length > 0) {
             return <ul className="products">
-                {products.map((item, index) => <ProductItem key={index} details={item}/>)}
+                {products.map((item, index) => <ProductItem key={index}
+                                                            details={item}
+                                                            currencySymbol={currencySymbol}/>)}
             </ul>
         } else {
             return <div>Sorry no products found :(</div>
@@ -18,7 +20,9 @@ const Products = function(props) {
     } else {
         return <React.Fragment>
             <ul className="products">
-            {products.map((item, index) => <ProductItem key={index} details={item}/>)}
+            {products.map((item, index) => <ProductItem key={index}
+                                                        details={item}
+                                                        currencySymbol={currencySymbol}/>)}
             </ul>
             <LoaderMask/>
         </React.Fragment>
@@ -27,6 +31,7 @@ const Products = function(props) {
 
 Products.propTypes = {
     products: PropTypes.arrayOf(PropTypes.object),
+    currencySymbol: PropTypes.string.isRequired,
     loadingComplete: PropTypes.bool
 };
 

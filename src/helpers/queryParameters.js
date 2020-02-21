@@ -92,6 +92,9 @@ export const prepareProductsQuery = (params) => {
               total_pages
             }
           }
+          currency {
+                base_currency_symbol
+          }
         }
         `;
 };

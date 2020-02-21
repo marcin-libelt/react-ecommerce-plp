@@ -7,7 +7,6 @@ class ProductItem extends React.Component {
   }
 
   render() {
-
       const { name, canonical_url, price, category_image, small_image } = this.props.details;
       const isSpecialPrice = price.minimalPrice.amount.value < price.regularPrice.amount.value;
       const clsNameArr = [
@@ -18,8 +17,8 @@ class ProductItem extends React.Component {
       const percentage = isSpecialPrice ? (price.minimalPrice.amount.value / price.regularPrice.amount.value) * 100 : 0;
       const priceBox = <div className={clsNameArr.join(" ")}>
         {name}
-        <span className="specialPrice" >{ price.minimalPrice.amount.value }</span>
-        { isSpecialPrice ? <p className={'regularPrice'}><span className={'old-price'}>{ price.regularPrice.amount.value }</span>{ percentage + '% off'}</p> : ''}
+        <span className="specialPrice" >{ this.props.currencySymbol + '' + price.minimalPrice.amount.value }</span>
+        { isSpecialPrice ? <p className={'regularPrice'}><span className={'old-price'}>{ this.props.currencySymbol + '' +price.regularPrice.amount.value }</span>{ percentage + '% off'}</p> : ''}
       </div>;
 
       return <li className={'product-item'}>
