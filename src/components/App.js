@@ -162,6 +162,7 @@ class App extends React.Component {
             }), this.afterFiltersAction);
         } else {
 
+            value = value.toString();
             let selectedFilters;
 
             if ("undefined" === typeof this.state.selectedFilters[filterVarName]) {

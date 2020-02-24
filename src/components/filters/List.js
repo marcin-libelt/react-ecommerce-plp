@@ -12,9 +12,10 @@ class List extends React.Component {
 
     static getDerivedStateFromProps = (props, state) => {
         const { filter, selectedFilters } = props;
-        const filters = filter["filter_items"].reduce((acc, cur) => {
-            acc[cur["value_string"]] = {
+        const filters = filter["filter_items"].reduce((acc, cur, index) => {
+            acc[index] = {
                 label: cur.label,
+                code: parseInt(cur["value_string"]),
                 selected: selectedFilters.indexOf(cur["value_string"]) != -1 ? true : false
             };
             return acc;
@@ -29,15 +30,16 @@ class List extends React.Component {
 
     createField = (item, index) => {
         const isSelected = this.state.filters[item].selected;
+        let code = this.state.filters[item].code;
         if(this.props.filter["request_var"] !== "size") {
             return (
                 <li key={index} className={isSelected ? 'active' : ''}>
                     <input type={'checkbox'}
                            title={this.state.filters[item].label}
                            checked={isSelected}
-                           onChange={(event) => this.props.onFiltersUpdate(item, this.props.filter["request_var"], event)}
-                           id={index + '-' + item}/>
-                    <label htmlFor={index + '-' + item}>{this.state.filters[item].label}</label>
+                           onChange={(event) => this.props.onFiltersUpdate(code, this.props.filter["request_var"], event)}
+                           id={index + '-' + code}/>
+                    <label htmlFor={index + '-' + code}>{this.state.filters[item].label}</label>
                 </li>
             )
         } else {
@@ -46,7 +48,7 @@ class List extends React.Component {
                     <button type={'button'}
                             aria-selected={isSelected}
                             className={isSelected ? 'is-selected' : ''}
-                            onClick={(event) => this.props.onFiltersUpdate(item, this.props.filter["request_var"], event)}>
+                            onClick={(event) => this.props.onFiltersUpdate(code, this.props.filter["request_var"], event)}>
                         <span>{this.state.filters[item].label}</span>
                     </button>
                 </li>

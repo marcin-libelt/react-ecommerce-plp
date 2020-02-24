@@ -160,7 +160,6 @@ class Filters extends React.Component {
     }
 
     render() {
-        const { onFiltersUpdate } = this.props;
         const clsNamesArr = [
             'filters-container',
             this.props.hidden ? 'mobile-hidden' : ''
