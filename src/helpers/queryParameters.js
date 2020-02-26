@@ -32,8 +32,10 @@ export const prepareProductsQuery = (params) => {
 
     switch (sort) {
         case "created_at":
-        case "position":
             sorter = `${sort}: DESC`;
+            break;
+        case "position":
+            sorter = `${sort}: ASC`;
             break;
         case "low":
         case "high":
