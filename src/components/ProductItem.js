@@ -10,21 +10,32 @@ class ProductItem extends React.Component {
       const { name, canonical_url, price, category_image, small_image } = this.props.details;
       const isSpecialPrice = price.minimalPrice.amount.value < price.regularPrice.amount.value;
       const clsNameArr = [
-          'price-box',
-          isSpecialPrice ? 'is-special-price' : ''
+          'product-essentials',
+          isSpecialPrice ? 'has-special-price' : ''
+      ];
+
+      const clsNameArrNormalPrice = [
+          'normal-price',
+          isSpecialPrice ? 'is-discounted' : ''
       ];
 
       const percentage = isSpecialPrice ? (price.minimalPrice.amount.value / price.regularPrice.amount.value) * 100 : 0;
-      const priceBox = <div className={clsNameArr.join(" ")}>
-        {name}
-        <span className="specialPrice" >{ this.props.currencySymbol + '' + price.minimalPrice.amount.value }</span>
-        { isSpecialPrice ? <p className={'regularPrice'}><span className={'old-price'}>{ this.props.currencySymbol + '' +price.regularPrice.amount.value }</span>{ percentage + '% off'}</p> : ''}
+
+      const priceBox = <div className={'price-box'}>
+          <p className={clsNameArr.join(" ")}>
+              <span className="product-name">{name}</span>
+              <span className={clsNameArrNormalPrice.join(" ")}>{ this.props.currencySymbol + '' + price.minimalPrice.amount.value }</span>
+          </p>
+
+        { isSpecialPrice ? <React.Fragment>
+                                <span className={'old-price'}>{ this.props.currencySymbol + '' +price.regularPrice.amount.value }</span>
+            <span className="discount-percentage">{ percentage + '% off'}</span></React.Fragment> : ''}
       </div>;
 
       return <li className={'product-item'}>
-          <a href={canonical_url}>
-            <img src={category_image} alt={small_image.label} />
-            <div className={'product-details'}>
+          <a href={canonical_url} aria-label={name + ' ' + this.props.currencySymbol + '' + price.minimalPrice.amount.value}>
+            <img src={category_image} alt={small_image.label} aria-hidden={true} />
+            <div className={'product-details'} aria-hidden={true}>
                 {priceBox}
             </div>
           </a>
