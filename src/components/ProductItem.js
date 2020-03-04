@@ -18,7 +18,7 @@ class ProductItem extends React.Component {
           'normal-price',
           isSpecialPrice ? 'is-discounted' : ''
       ];
-      const percentage = isSpecialPrice ? (price.minimalPrice.amount.value / price.regularPrice.amount.value) * 100 : 0;
+      const percentage = isSpecialPrice ? (1 - (price.minimalPrice.amount.value / price.regularPrice.amount.value)) * 100 : 0;
       const priceBox = <div className={'price-box'}>
           <p className={clsNameArr.join(" ")}>
               <span className="product-name">{name}</span>
