@@ -30,6 +30,23 @@ class View extends \Magento\Framework\View\Element\Template
         parent::__construct($context, $data);
     }
 
+    protected function _prepareLayout()
+    {
+        parent::_prepareLayout();
+        $category = $this->getCurrentCategory();
+
+        $categoryTitle = "";
+
+        if ($category) {
+            $categoryTitle = $category->getName();
+            if($category->getMetaTitle() != "") {
+                $categoryTitle = $category->getMetaTitle();
+            }
+        }
+
+        $this->pageConfig->getTitle()->set($categoryTitle);
+    }
+
     public function getCurrentCategory()
     {
         return $this->_coreRegistry->registry('current_category');
