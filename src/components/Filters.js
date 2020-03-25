@@ -4,6 +4,7 @@ import ApolloClient, { gql } from 'apollo-boost';
 import List from "./filters/List";
 import PriceSlider from "./filters/PriceSlider";
 import LoaderMask from "./LoaderMask";
+import PerfectScrollbar from 'react-perfect-scrollbar'
 
 const components = {
     filter_color: List,
@@ -165,10 +166,12 @@ class Filters extends React.Component {
             this.props.hidden ? 'mobile-hidden' : ''
         ];
         if(this.state.filters !== null) {
-            return <div className={clsNamesArr.join(' ')}>
-                    {this.renderPriceFilter()}
-                    {this.createFilters()}
-                </div>
+            return <PerfectScrollbar>
+                        <div className={clsNamesArr.join(' ')}>
+                            {this.renderPriceFilter()}
+                            {this.createFilters()}
+                        </div>
+                    </PerfectScrollbar>
         } else {
             return <LoaderMask />
         }
