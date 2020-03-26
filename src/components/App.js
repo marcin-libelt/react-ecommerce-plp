@@ -398,11 +398,11 @@ class App extends React.Component {
                         />
                     </div>
                     <div className={'products-block zoom-' + this.state.zoom}>
-                        <SortersZoom onSetSorters={this.onSetSorters}
+                        { this.state.products.length > 0 ? <SortersZoom onSetSorters={this.onSetSorters}
                                      onSetZoom={this.onSetZoom}
                                      currentSorter={this.state.sort}
                                      hidden={this.state.dropdown !== "sorters"}
-                        />
+                        /> : '' }
                         <Products products={this.state.products}
                                   currencySymbol={this.state.currencySymbol}
                                   loadingComplete={this.state.productLoadingComplete}/>

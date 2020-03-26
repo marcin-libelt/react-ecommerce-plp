@@ -21,7 +21,7 @@ const Products = function(props) {
             </ul>
         } else {
             return <React.Fragment>
-                <div>Sorry, no results match your filters.</div>
+                <p className={'no-results'}>Sorry, no results match your filters.</p>
                 <canvas id="canvas-bubble"></canvas>
                 <div className="wrapper">
                     <div className="circles">
