@@ -7,6 +7,11 @@ const Products = function(props) {
 
     const { products, currencySymbol, loadingComplete } = props;
 
+    let circles = [];
+    for(let i = 0; i < 20; i++) {
+        circles.push(<div className="circle" key={i}></div>);
+    }
+
     if(loadingComplete) {
         if(products.length > 0) {
             return <ul className="products">
@@ -15,7 +20,15 @@ const Products = function(props) {
                                                             currencySymbol={currencySymbol}/>)}
             </ul>
         } else {
-            return <div>Sorry no products found :(</div>
+            return <React.Fragment>
+                <div>Sorry, no results match your filters.</div>
+                <canvas id="canvas-bubble"></canvas>
+                <div className="wrapper">
+                    <div className="circles">
+                        { circles }
+                    </div>
+                </div>
+            </React.Fragment>;
         }
     } else {
         return <React.Fragment>

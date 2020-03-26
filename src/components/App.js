@@ -31,7 +31,7 @@ class App extends React.Component {
             dropdown: null,
             userFiltersSelected: false,
             userFiltersSubmited: false,
-            productLoadingComplete: true,
+            productLoadingComplete: false,
             currentPage: 1,
             isSidebarFixed: false,
             currencySymbol: ""
