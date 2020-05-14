@@ -44,7 +44,7 @@ class Filters extends React.Component {
 
         this.state = {
             filters: null,
-            filtersCollapsedStatus: {},
+            currentFilterPanel: "size",
             filtersDropdownVisible: false,
             sortDropdownVisible: false,
             currencySymbol: ""
@@ -100,11 +100,10 @@ class Filters extends React.Component {
     }
 
     onHeaderClick(requestVar) {
-        this.setState(prevState => ({
-            filtersCollapsedStatus: {
-                ...prevState.filtersCollapsedStatus, [requestVar]: !prevState.filtersCollapsedStatus[requestVar]
-            }
-        }));
+        requestVar === this.state.currentFilterPanel ? requestVar = null : requestVar;
+        this.setState({
+            currentFilterPanel: requestVar
+        });
     }
 
     getPriceFilterItem = (filterVarCode) => this.state.filters.find(filterItems => filterItems.request_var === filterVarCode);
@@ -121,7 +120,7 @@ class Filters extends React.Component {
                 'filter-box',
                 !this.getCounter(item.request_var) ? 'clean' : '',
                 'box-' + item.request_var,
-                this.state.filtersCollapsedStatus[item.request_var] ? 'collapsed' : ''
+                this.state.currentFilterPanel !== item.request_var ? 'collapsed' : ''
             ];
 
             return <div key={index}
@@ -130,7 +129,7 @@ class Filters extends React.Component {
                                 requestVar={item.request_var}
                                 counter={this.getCounter(item.request_var)}
                                 onHeaderClick={this.onHeaderClick}
-                                collapsed={this.state.filtersCollapsedStatus[item.request_var]}
+                                collapsed={this.state.currentFilterPanel !== item.request_var}
                         />
                         <SpecificFilter filter={item}
                                         selectedFilters={selectedFilters[item.request_var] ? selectedFilters[item.request_var] : []}
