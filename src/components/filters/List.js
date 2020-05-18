@@ -56,15 +56,51 @@ class List extends React.Component {
         }
     };
 
+    createAllToggle = () => {
+        const code = 'all';
+        const index = parseInt(Math.random()*10000);
+        const isSelected = !this.props.selectedFilters.length > 0;
+
+        const clsNamesArr = [
+            'clear-all-section',
+            isSelected ? 'active' : ''
+        ];
+
+        console.log(this.props.filter["request_var"]);
+
+        if(this.props.filter["request_var"] !== "size") {
+            return (<li key={index} className={clsNamesArr.join(' ')}>
+                <input type={'checkbox'}
+                       title={'All'}
+                       checked={isSelected}
+                       onChange={() => this.props.onShowAll(this.props.filter["request_var"])}
+                       id={index + '-' + code}/>
+                <label htmlFor={index + '-' + code}>{'All'}</label>
+            </li>);
+        } else {
+            return (<li key={index} className={clsNamesArr.join(' ')}>
+                <button type={'button'}
+                        aria-selected={isSelected}
+                        className={isSelected ? 'is-selected' : ''}
+                        onClick={() => this.props.onShowAll(this.props.filter["request_var"])}>
+                    <span>{'All'}</span>
+                </button>
+            </li>);
+        }
+
+    }
+
     render() {
         return <ul>
           {this.createFormFields()}
+          {this.createAllToggle()}
         </ul>
     };
 }
 
 List.propTypes = {
     filter: PropTypes.object.isRequired,
+    onShowAll: PropTypes.func.isRequired,
     onFiltersUpdate: PropTypes.func.isRequired,
     selectedFilters: PropTypes.array
 };

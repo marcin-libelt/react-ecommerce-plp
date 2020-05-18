@@ -111,7 +111,7 @@ class Filters extends React.Component {
     createFilters = () => this.state.filters.map(this.createFilter);
 
     createFilter = (item, index) => {
-        const { selectedFilters, onFiltersUpdate } = this.props;
+        const { selectedFilters, onFiltersUpdate, onShowAll } = this.props;
 
         if(typeof components[item.request_var] !== "undefined") {
 
@@ -133,6 +133,7 @@ class Filters extends React.Component {
                         />
                         <SpecificFilter filter={item}
                                         selectedFilters={selectedFilters[item.request_var] ? selectedFilters[item.request_var] : []}
+                                        onShowAll={onShowAll}
                                         onFiltersUpdate={onFiltersUpdate} />
                     </div>
         }
@@ -156,7 +157,8 @@ class Filters extends React.Component {
         return isOnePrice ? null : <PriceSlider filter={priceFilter}
                      price={this.getPriceForInput()}
                      currencySymbol={this.state.currencySymbol}
-                     onFiltersUpdate={this.props.onFiltersUpdate} />;
+                     onFiltersUpdate={this.props.onFiltersUpdate}
+        />;
     }
 
     render() {
@@ -180,6 +182,7 @@ class Filters extends React.Component {
 Filters.propTypes = {
     filters: PropTypes.array.isRequired,
     gqlParams: PropTypes.object.isRequired,
+    onShowAll: PropTypes.func.isRequired,
     onFiltersUpdate: PropTypes.func.isRequired,
     selectedFilters: PropTypes.object.isRequired,
     hidden: PropTypes.bool

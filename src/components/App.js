@@ -15,6 +15,7 @@ class App extends React.Component {
         super(props);
 
         this.onFiltersUpdate = this.onFiltersUpdate.bind(this);
+        this.onShowAll = this.onShowAll.bind(this);
         this.onFiltersClear = this.onFiltersClear.bind(this);
         this.onSetSorters = this.onSetSorters.bind(this);
         this.onSetZoom = this.onSetZoom.bind(this);
@@ -150,6 +151,19 @@ class App extends React.Component {
             // normal product Load without filters nor sorters
             this.getProducts();
         }
+    }
+
+    onShowAll(filterVarName) {
+
+        console.log(filterVarName);
+        let prevFilters = {...this.state.selectedFilters};
+        let newState = {};
+
+        delete prevFilters[filterVarName];
+        newState = {
+            selectedFilters: prevFilters
+        };
+        this.setState(newState, this.afterFiltersAction);
     }
 
     onFiltersUpdate(value, filterVarName) {
@@ -384,6 +398,7 @@ class App extends React.Component {
                             <TopCategories categories={this.props.parameter.topCategories}/>
                             <Filters filters={this.state.filters}
                                      selectedFilters={this.state.selectedFilters}
+                                     onShowAll={this.onShowAll}
                                      onFiltersUpdate={this.onFiltersUpdate}
                                      gqlParams={this.props.parameter}
                                      hidden={this.state.dropdown !== "filters"}
