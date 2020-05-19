@@ -91,8 +91,6 @@ class App extends React.Component {
                 isSidebarFixed: !this.state.isSidebarFixed
             })
         }
-
-        sessionStorage.removeItem(this.defaults.sessionScrollKey);
     };
 
     viewportResizeHandler = () => {
