@@ -27,7 +27,7 @@ class ProductItem extends React.Component {
 
         { isSpecialPrice ? <React.Fragment>
                                 <span className={'old-price'}>{ this.props.currencySymbol + '' + priceCents(price.regularPrice.amount.value) }</span>
-            <span className="discount-percentage">{ percentage + '% off'}</span></React.Fragment> : ''}
+            <span className="discount-percentage">{ Math.round(percentage) + '% off'}</span></React.Fragment> : ''}
       </div>;
 
       return <li className={'product-item'}>
