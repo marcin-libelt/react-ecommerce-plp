@@ -66,8 +66,6 @@ class List extends React.Component {
             isSelected ? 'active' : ''
         ];
 
-        console.log(this.props.filter["request_var"]);
-
         if(this.props.filter["request_var"] !== "size") {
             return (<li key={index} className={clsNamesArr.join(' ')}>
                 <input type={'checkbox'}

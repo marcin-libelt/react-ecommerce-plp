@@ -86,6 +86,7 @@ class App extends React.Component {
         }
 
         const result = this.viewportHeigh >= this.wrapperElement.getBoundingClientRect().bottom;
+
         if(result !== this.state.isSidebarFixed) {
             this.setState({
                 isSidebarFixed: !this.state.isSidebarFixed
@@ -152,8 +153,6 @@ class App extends React.Component {
     }
 
     onShowAll(filterVarName) {
-
-        console.log(filterVarName);
         let prevFilters = {...this.state.selectedFilters};
         let newState = {};
 
