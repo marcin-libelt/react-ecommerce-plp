@@ -43,13 +43,17 @@ class List extends React.Component {
                 </li>
             )
         } else {
+            let label = this.state.filters[item].label;
+            if(label.match(/^.*(\.|,)5$/)) {
+                label = <span className="fraction">{label.replace(/(\.|,)5/g, "")}&frac12;</span>;
+            }
             return (
                 <li key={index} className={isSelected ? 'active' : ''}>
                     <button type={'button'}
                             aria-selected={isSelected}
                             className={isSelected ? 'is-selected' : ''}
                             onClick={(event) => this.props.onFiltersUpdate(code, this.props.filter["request_var"], event)}>
-                        <span>{this.state.filters[item].label}</span>
+                        <span>{label}</span>
                     </button>
                 </li>
             )
