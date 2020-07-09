@@ -415,9 +415,12 @@ class App extends React.Component {
                                      currentSorter={this.state.sort}
                                      hidden={this.state.dropdown !== "sorters"}
                         /> : '' }
+
                         <Products products={this.state.products}
                                   currencySymbol={this.state.currencySymbol}
                                   loadingComplete={this.state.productLoadingComplete}/>
+                        {this.isLocked ?  <LoaderMask /> : ""}
+
                     </div>
                 </div>
             );
