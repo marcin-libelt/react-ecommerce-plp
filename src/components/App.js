@@ -419,7 +419,9 @@ class App extends React.Component {
                         <Products products={this.state.products}
                                   currencySymbol={this.state.currencySymbol}
                                   loadingComplete={this.state.productLoadingComplete}/>
-                        {this.isLocked ?  <LoaderMask /> : ""}
+                        {this.isLocked ?  <div className={'smallLoader'}>
+                            <LoaderMask />
+                        </div> : ""}
 
                     </div>
                 </div>
