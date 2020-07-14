@@ -167,7 +167,7 @@ class Filters extends React.Component {
             this.props.hidden ? 'mobile-hidden' : ''
         ];
         if(this.state.filters !== null) {
-            return <PerfectScrollbar>
+            return <PerfectScrollbar options={{"suppressScrollX": true}} >
                         <div className={clsNamesArr.join(' ')}>
                             {this.renderPriceFilter()}
                             {this.createFilters()}
