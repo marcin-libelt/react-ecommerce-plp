@@ -96,6 +96,7 @@ export const prepareProductsQuery = (params) => {
           }
           currency {
                 base_currency_symbol
+                base_currency_code
           }
         }
         `;

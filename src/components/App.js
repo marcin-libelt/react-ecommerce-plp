@@ -332,11 +332,14 @@ class App extends React.Component {
                     products = result.data["discountFilteredProducts"].items;
                 }
 
+                const currencySymbol = !result.data["currency"]["base_currency_symbol"] ?
+                    result.data["currency"]["base_currency_code"] : result.data["currency"]["base_currency_symbol"];
+
                 this.setState({
                     products: products,
                     userFiltersSelected: false,
                     userFiltersSubmited: this.isAnyFiltersApplied(),
-                    currencySymbol: result.data["currency"]["base_currency_symbol"]
+                    currencySymbol
                 }, () => { this.afterGetProducts(scrollToPosition) });
             });
     }
