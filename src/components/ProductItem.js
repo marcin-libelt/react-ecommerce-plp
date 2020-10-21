@@ -8,7 +8,7 @@ class ProductItem extends React.Component {
   }
 
   render() {
-      const { name, canonical_url, price, category_image, small_image } = this.props.details;
+      const { name, url_key, url_suffix, price, category_image, small_image } = this.props.details;
       const isSpecialPrice = price.minimalPrice.amount.value < price.regularPrice.amount.value;
       const clsNameArr = [
           'product-essentials',
@@ -31,7 +31,7 @@ class ProductItem extends React.Component {
       </div>;
 
       return <li className={'product-item'}>
-          <a href={canonical_url} aria-label={name + ' ' + this.props.currencySymbol + '' + priceCents(price.minimalPrice.amount.value) }>
+          <a href={url_key + url_suffix} aria-label={name + ' ' + this.props.currencySymbol + '' + priceCents(price.minimalPrice.amount.value) }>
             <img src={category_image} alt={small_image.label} aria-hidden={true} />
             <div className={'product-details'} aria-hidden={true}>
                 {priceBox}

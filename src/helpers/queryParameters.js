@@ -48,10 +48,10 @@ export const prepareProductsQuery = (params) => {
     }
 
     return gql`
-        {  
-          discountFilteredProducts( 
+        {
+          discountFilteredProducts(
             category_id: ${categoryId}
-            pageSize: ${pageSize}    
+            pageSize: ${pageSize}
             currentPage: ${currentPage}
             sort: {
               ${sorter}
@@ -69,7 +69,8 @@ export const prepareProductsQuery = (params) => {
               description {
                 html
               }
-              canonical_url
+              url_key
+              url_suffix
               price {
                 regularPrice {
                   amount {
@@ -117,7 +118,7 @@ export const prepareFiltersQuery = (params) => {
                 items_count
               }
             }
-          } 
+          }
         }
         `;
 };
