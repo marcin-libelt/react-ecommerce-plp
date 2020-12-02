@@ -10,6 +10,7 @@ class ProductItem extends React.Component {
   render() {
       const { name, url_key, url_suffix, price, category_image, small_image } = this.props.details;
       const isSpecialPrice = price.minimalPrice.amount.value < price.regularPrice.amount.value;
+      const showDiscountMiddlePrice = price.discountMiddlePrice.amount.value < price.regularPrice.amount.value && price.discountMiddlePrice.amount.value >  price.minimalPrice.amount.value;
       const clsNameArr = [
           'product-essentials',
           isSpecialPrice ? 'has-special-price' : ''
@@ -25,8 +26,12 @@ class ProductItem extends React.Component {
               <span className={clsNameArrNormalPrice.join(" ")}>{ this.props.currencySymbol + '' + priceCents(price.minimalPrice.amount.value) }</span>
           </p>
 
+        { showDiscountMiddlePrice ? <React.Fragment>
+          <span className={'old-price'}>{ this.props.currencySymbol + '' + priceCents(price.discountMiddlePrice.amount.value) }</span></React.Fragment> : ''
+        }
+
         { isSpecialPrice ? <React.Fragment>
-                                <span className={'old-price'}>{ this.props.currencySymbol + '' + priceCents(price.regularPrice.amount.value) }</span>
+            <span className={'old-price'}>{ this.props.currencySymbol + '' + priceCents(price.regularPrice.amount.value) }</span>
             <span className="discount-percentage">{ Math.round(percentage) + '% off'}</span></React.Fragment> : ''}
       </div>;
 

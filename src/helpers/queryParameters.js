@@ -84,6 +84,12 @@ export const prepareProductsQuery = (params) => {
                     currency
                   }
                 }
+                discountMiddlePrice {
+                  amount {
+                    value
+                    currency
+                  }
+                }
               }
               small_image {
                  label
