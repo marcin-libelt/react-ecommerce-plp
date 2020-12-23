@@ -319,7 +319,12 @@ class App extends React.Component {
                     sort: this.state.sort,
                     pageSize,
                     currentPage
-                })
+                }),
+                context: {
+                    headers: {
+                        Store: this.props.parameter.storeCode
+                    }
+                }
             })
             .then(result => {
                 let products = [];
