@@ -49,6 +49,7 @@ class App extends React.Component {
             sessionScrollKey: 'plp-scroll'
         };
 
+        this.beforeUserSubmit = false;
         this.isLocked = false;
         this.totalPages = 0;
         this.viewportHeigh = 0;
@@ -73,7 +74,7 @@ class App extends React.Component {
 
     pagerScrollHandler = () => {
 
-        if(!this.isLocked && this.totalPages > this.state.currentPage) {
+        if(!this.beforeUserSubmit && !this.isLocked && this.totalPages > this.state.currentPage) {
             if (this.viewportHeigh >= this.wrapperElement.getBoundingClientRect().bottom - this.defaults.autoLoadOffset) {
                 this.isLocked = true;
                 this.setState(prevState => ({
@@ -164,6 +165,7 @@ class App extends React.Component {
     }
 
     onFiltersUpdate(value, filterVarName) {
+        this.beforeUserSubmit = true;
 
         // exception for Price filter
         if(filterVarName === "price") {
@@ -304,18 +306,10 @@ class App extends React.Component {
 
         let pageSize = this.defaults.chunkSize;
         let currentPage = this.state.currentPage;
-        let scrollToTopFlag = false;
 
         if(!loadNextPage) {
             pageSize = this.defaults.chunkSize * this.state.currentPage;
             currentPage = 1;
-        }
-
-        if(this.state.userFiltersSelected) {
-            loadNextPage = false;
-            currentPage = 1;
-            pageSize = this.defaults.chunkSize;
-            scrollToTopFlag = true;
         }
 
         this.client
@@ -332,7 +326,6 @@ class App extends React.Component {
             .then(result => {
                 let products = [];
                 this.totalPages = result.data["discountFilteredProducts"]["page_info"]["total_pages"];
-                //        const currentPage = result.data["discountFilteredProducts"]["page_info"]["current_page"];
 
                 if(loadNextPage) { // concat product items
                     const oldProducts = [...this.state.products];
@@ -348,9 +341,8 @@ class App extends React.Component {
                     products: products,
                     userFiltersSelected: false,
                     userFiltersSubmited: this.isAnyFiltersApplied(),
-                    //          currentPage,
                     currencySymbol
-                }, () => { this.afterGetProducts(scrollToPosition, scrollToTopFlag); });
+                }, () => { this.afterGetProducts(scrollToPosition); this.beforeUserSubmit = false; });
             });
     }
 
@@ -362,7 +354,7 @@ class App extends React.Component {
         window.scrollTo(0, parseInt(sessionStorage.getItem(this.defaults.sessionScrollKey)) || 0);
     }
 
-    afterGetProducts(scrollTo, scrollTop = false) {
+    afterGetProducts(scrollTo) {
         this.isLocked = false;
 
         setTimeout(() => {
@@ -371,9 +363,7 @@ class App extends React.Component {
                 document.querySelectorAll('ul.products')[0].removeEventListener('click', this.clickListenerForProducts);
                 document.querySelectorAll('ul.products')[0].addEventListener('click', this.clickListenerForProducts);
 
-                if(scrollTop) {
-                    window.scrollTo(0,0);
-                } else if(scrollTo) {
+                if(scrollTo) {
                     this.scrollToPosition();
                 }
 
