@@ -304,10 +304,18 @@ class App extends React.Component {
 
         let pageSize = this.defaults.chunkSize;
         let currentPage = this.state.currentPage;
+        let scrollToTopFlag = false;
 
         if(!loadNextPage) {
             pageSize = this.defaults.chunkSize * this.state.currentPage;
             currentPage = 1;
+        }
+
+        if(this.state.userFiltersSelected) {
+            loadNextPage = false;
+            currentPage = 1;
+            pageSize = this.defaults.chunkSize;
+            scrollToTopFlag = true;
         }
 
         this.client
@@ -324,6 +332,7 @@ class App extends React.Component {
             .then(result => {
                 let products = [];
                 this.totalPages = result.data["discountFilteredProducts"]["page_info"]["total_pages"];
+                //        const currentPage = result.data["discountFilteredProducts"]["page_info"]["current_page"];
 
                 if(loadNextPage) { // concat product items
                     const oldProducts = [...this.state.products];
@@ -339,8 +348,9 @@ class App extends React.Component {
                     products: products,
                     userFiltersSelected: false,
                     userFiltersSubmited: this.isAnyFiltersApplied(),
+                    //          currentPage,
                     currencySymbol
-                }, () => { this.afterGetProducts(scrollToPosition) });
+                }, () => { this.afterGetProducts(scrollToPosition, scrollToTopFlag); });
             });
     }
 
@@ -352,7 +362,7 @@ class App extends React.Component {
         window.scrollTo(0, parseInt(sessionStorage.getItem(this.defaults.sessionScrollKey)) || 0);
     }
 
-    afterGetProducts(scrollTo) {
+    afterGetProducts(scrollTo, scrollTop = false) {
         this.isLocked = false;
 
         setTimeout(() => {
@@ -361,9 +371,12 @@ class App extends React.Component {
                 document.querySelectorAll('ul.products')[0].removeEventListener('click', this.clickListenerForProducts);
                 document.querySelectorAll('ul.products')[0].addEventListener('click', this.clickListenerForProducts);
 
-                if(scrollTo) {
+                if(scrollTop) {
+                    window.scrollTo(0,0);
+                } else if(scrollTo) {
                     this.scrollToPosition();
                 }
+
                 this.setState({
                     productLoadingComplete: true
                 });
@@ -414,9 +427,9 @@ class App extends React.Component {
                     </div>
                     <div className={'products-block zoom-' + this.state.zoom}>
                         { this.state.products.length > 0 ? <SortersZoom onSetSorters={this.onSetSorters}
-                                     onSetZoom={this.onSetZoom}
-                                     currentSorter={this.state.sort}
-                                     hidden={this.state.dropdown !== "sorters"}
+                                                                        onSetZoom={this.onSetZoom}
+                                                                        currentSorter={this.state.sort}
+                                                                        hidden={this.state.dropdown !== "sorters"}
                         /> : '' }
 
                         <Products products={this.state.products}
