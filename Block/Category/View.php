@@ -36,14 +36,18 @@ class View extends \Magento\Framework\View\Element\Template
         $category = $this->getCurrentCategory();
 
         $categoryTitle = "";
+        $description = "";
 
         if ($category) {
             $categoryTitle = $category->getName();
             if($category->getMetaTitle() != "") {
                 $categoryTitle = $category->getMetaTitle();
             }
+
+            $description = $category->getMetaDescription();
         }
 
+        $this->pageConfig->setDescription($description);
         $this->pageConfig->getTitle()->set($categoryTitle);
     }
 
