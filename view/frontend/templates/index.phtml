@@ -4,6 +4,7 @@
         let React = App.init('react-category-root', {
             gql: '<?php echo $block->getUrl('graphql'); ?>',
             topCategories: <?php echo $block->getTopCategoriesJson(); ?>,
+            storeCode: '<?php echo $block->getStoreCode() ?>',
             categoryId: '<?php echo $block->getCurrentCategory()->getId() ?>' });
     });
 </script>

@@ -67,7 +67,7 @@ class Filters extends React.Component {
                 items_count
               }
             }
-          } 
+          }
           currency {
                 base_currency_symbol
           }
@@ -78,7 +78,12 @@ class Filters extends React.Component {
     componentDidMount() {
         this.client
             .query({
-                query: this.FILTERS
+                query: this.FILTERS,
+                context: {
+                    headers: {
+                        Store: this.props.gqlParams.storeCode
+                    }
+                }
             })
             .then(result => {
                 this.setState({
