@@ -38,7 +38,7 @@ class ProductItem extends React.Component {
       return <li className={'product-item'}>
           <a href={window.BASE_URL + url_key + url_suffix} aria-label={name + ' ' + this.props.currencySymbol + '' + priceCents(price.minimalPrice.amount.value) }>
             <img src={category_image} alt={small_image.label} aria-hidden={true} />
-            <div className={'product-details'} aria-hidden={true}>
+            <div className={'product-details'}>
                 {priceBox}
             </div>
           </a>
