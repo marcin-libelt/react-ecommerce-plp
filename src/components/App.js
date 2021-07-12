@@ -8,6 +8,7 @@ import TopCategories from "./TopCategories";
 import MobileDropdownTogglers from './MobileDropdownTogglers';
 import { prepareProductsQuery, prepareFiltersQuery } from '../helpers/queryParameters'
 import LoaderMask from "./LoaderMask";
+import PageTitle from "./Title";
 
 class App extends React.Component {
 
@@ -406,6 +407,7 @@ class App extends React.Component {
         if(this.state.filters !== null) {
             return (
                 <div className={clsNamesArr.join(' ')}>
+                    <PageTitle categories={this.props.parameter.topCategories} />
                     <div className={'filters-block'}>
                         <div className={'inner-container'}>
                             <TopCategories categories={this.props.parameter.topCategories}/>
