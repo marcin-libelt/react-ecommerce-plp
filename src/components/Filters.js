@@ -20,6 +20,7 @@ const Header = (props) => {
         header = <a href="#"
            aria-expanded={!props.collapsed}
            onClick={(event) => { event.preventDefault(); props.onHeaderClick(props.requestVar)}}>
+            <span className={'visually-hidden'}>{'filter by:'}</span>
             <span>{props.title}</span>
             {props.counter}
             <i className={'chevron'}>&nbsp;</i>
