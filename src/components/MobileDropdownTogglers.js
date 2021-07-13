@@ -27,7 +27,7 @@ function MobileDropdownTogglers(props) {
                className={'toggle'}
                aria-expanded={props.dropdownStatus === 'filters'}
                onClick={(event) => { event.preventDefault(); props.onDropdownToggle('filters')}}>
-                <i className={'chevron'}></i>
+                <i className={'chevron'} aria-hidden={true}></i>
                 <span className={'visually-hidden'}>{'Filters toggler'}</span>
             </a>
         </div>
