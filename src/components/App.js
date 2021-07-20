@@ -290,7 +290,6 @@ class App extends React.Component {
 
     onDropdownToggle(type) {
 
-
         this.setState(prevState => {
             const result = prevState.dropdown === type ? null : type;
 
