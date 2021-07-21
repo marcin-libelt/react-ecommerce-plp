@@ -15,6 +15,8 @@ const SortersZoom = (props) => {
             <input type={'radio'}
                    title={sorters[item]}
                    id={'sort-' + item}
+                   name={'filterby'}
+                   value={sorters[item]}
                    checked={props.currentSorter === item}
                    onChange={() => props.onSetSorters(item)}/>
             <label htmlFor={'sort-' + item}>{sorters[item]}</label>
@@ -37,9 +39,12 @@ const SortersZoom = (props) => {
         <div className={'small-label'}>
             {'Sort by'}
         </div>
-        <ul className={'sorters'}>
-            <CreateSorters />
-        </ul>
+        <fieldset>
+            <legend className={'visually-hidden'}>{'Filter products by:'}</legend>
+            <ul className={'sorters'}>
+                <CreateSorters />
+            </ul>
+        </fieldset>
     </div>
 };
 
