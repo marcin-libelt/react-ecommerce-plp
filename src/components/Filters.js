@@ -10,8 +10,7 @@ const components = {
     filter_color: List,
     filter_heel_height: List,
     shoestyle: List,
-    size: List,
-    subcategory: List
+    size: List
 };
 
 const Header = (props) => {
@@ -68,7 +67,7 @@ class Filters extends React.Component {
                 items_count
               }
             }
-          } 
+          }
           currency {
                 base_currency_symbol
           }
