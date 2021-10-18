@@ -14,7 +14,7 @@ const Products = function(props) {
 
     if(loadingComplete) {
         if(products.length > 0) {
-            return <ul className="products">
+            return <ul className="products" role="region" aria-live="polite">
                 {products.map((item, index) => <ProductItem key={index}
                                                             details={item}
                                                             currencySymbol={currencySymbol}/>)}
