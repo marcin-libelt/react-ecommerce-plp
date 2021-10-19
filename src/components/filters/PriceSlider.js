@@ -31,6 +31,25 @@ class PriceSlider extends React.Component  {
         return acc;
     }, {});
 
+    handleChange = (event, extremum) => {
+        let data = {};
+        const value = event.target.value === "" ? 0 : parseInt(event.target.value);
+
+        switch (extremum) {
+            case "min":
+                data.min = value;
+                data.max = this.state.max;
+            break;
+            case "max":
+                data.min = this.state.min;
+                data.max = value;
+            break;
+        }
+
+        this.setState(data);
+        this.props.onFiltersUpdate(data, this.props.filter["name"]);
+    };
+
     render() {
 
         const priceValue = !this.isPriceSet() ? this.baseRange : this.props.price;
@@ -38,15 +57,35 @@ class PriceSlider extends React.Component  {
         const labelMax = this.state.max || priceValue.max;
 
         return <div className={'filter-box price-filter'}>
-            <div className={'header'}>{'Price'}</div>
-            <span className={'label-min'}>{this.props.currencySymbol}{labelMin}</span>
+            <div className={'header'}>
+                {'Price'}
+                <span className='sr-only'>
+                    Product price range selector.
+                    Right Arrow: Increase the value of the slider by one step.
+                    Up Arrow: Increase the value of the slider by one step.
+                    Left Arrow: Decrease the value of the slider by one step.
+                    Down Arrow: Decrease the value of the slider by one step.
+                </span>
+            </div>
+
+            <div className='label-min'>
+                <label htmlFor="price-min" className='sr-only'>minimum price of the product</label>
+                <span>{this.props.currencySymbol}</span>
+                <input id='price-min' onChange={event => this.handleChange(event, 'min')} value={labelMin} />
+            </div>
+            <div className='label-max' style={{'width': labelMax > 999 ? '43px' : '36px' }}>
+                <label htmlFor="price-max" className='sr-only'>maximum price of the product</label>
+                <span>{this.props.currencySymbol}</span>
+                <input id='price-max' onChange={event => this.handleChange(event, 'max')} value={labelMax} />
+            </div>
             <InputRange
                 minValue={this.baseRange.min}
                 maxValue={this.baseRange.max}
                 value={priceValue}
+                step={10}
                 onChange={this.onPriceSelectorChange}
             />
-            <span className={'label-max'}>{this.props.currencySymbol}{labelMax}</span>
+
         </div>
     }
 
