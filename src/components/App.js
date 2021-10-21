@@ -289,9 +289,20 @@ class App extends React.Component {
     }
 
     onDropdownToggle(type) {
-        this.setState(prevState => ({
-            dropdown: prevState.dropdown === type ? null : type
-        }));
+
+        this.setState(prevState => {
+            const result = prevState.dropdown === type ? null : type;
+
+            if(result) {
+                document.querySelector('body').classList.add('filters-open');
+            } else {
+                document.querySelector('body').classList.remove('filters-open');
+            }
+
+            return {
+                dropdown: result
+            }
+        });
     }
 
     onSetZoom(value) {

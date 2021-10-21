@@ -36,8 +36,8 @@ class ProductItem extends React.Component {
       </div>;
 
       return <li className={'product-item'}>
-          <a href={window.BASE_URL + url_key + url_suffix} aria-label={name + ' ' + this.props.currencySymbol + '' + priceCents(price.minimalPrice.amount.value) }>
-            <img src={category_image} alt={''} aria-hidden={true} />
+          <a href={window.BASE_URL + url_key + url_suffix} aria-label={name + ' ' + this.props.currencySymbol + '' + priceCents(price.minimalPrice.amount.value) + '. Click to go to the product page.' }>
+            <img src={category_image}  alt={''} aria-hidden={true} />
             <div className={'product-details'}>
                 {priceBox}
             </div>
