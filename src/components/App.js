@@ -298,7 +298,7 @@ class App extends React.Component {
             } else {
                 document.querySelector('body').classList.remove('filters-open');
             }
-
+            window.dispatchEvent(new CustomEvent("onSidebarOpen"));
             return {
                 dropdown: result
             }
