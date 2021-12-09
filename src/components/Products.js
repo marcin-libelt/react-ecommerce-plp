@@ -37,7 +37,7 @@ const Products = function(props) {
                                                         details={item}
                                                         currencySymbol={currencySymbol}/>)}
             </ul>
-            <LoaderMask text={'prducts'}/>
+            <LoaderMask/>
         </React.Fragment>
     }
 };
