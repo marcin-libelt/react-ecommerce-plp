@@ -415,49 +415,49 @@ class App extends React.Component {
             this.state.isSidebarFixed ? 'un-fixed' : ''
         ];
 
-        if(this.state.filters !== null) {
-            return (
-                <div className={clsNamesArr.join(' ')}>
-                    <PageTitle categories={this.props.parameter.topCategories} />
-                    <div className={'filters-block'}>
-                        <div className={'inner-container'}>
-                            <TopCategories categories={this.props.parameter.topCategories}/>
-                            <Filters filters={this.state.filters}
-                                     selectedFilters={this.state.selectedFilters}
-                                     onShowAll={this.onShowAll}
-                                     onFiltersUpdate={this.onFiltersUpdate}
-                                     gqlParams={this.props.parameter}
-                                     hidden={this.state.dropdown !== "filters"}
-                            />
-                        </div>
-                        <MobileDropdownTogglers onFiltersSubmit={this.onFiltersSubmit}
-                                                onFiltersClear={this.onFiltersClear}
-                                                onDropdownToggle={this.onDropdownToggle}
-                                                dropdownStatus={this.state.dropdown}
-                                                userFiltersSelected={this.state.userFiltersSelected}
-                                                userFiltersSubmited={this.state.userFiltersSubmited}
+        if(this.state.filters === null) {
+            return <LoaderMask text={"filters"} />
+        }
+
+        return (
+            <div className={clsNamesArr.join(' ')}>
+                <PageTitle categories={this.props.parameter.topCategories} />
+                <div className={'filters-block'}>
+                    <div className={'inner-container'}>
+                        <TopCategories categories={this.props.parameter.topCategories}/>
+                        <Filters filters={this.state.filters}
+                                 selectedFilters={this.state.selectedFilters}
+                                 onShowAll={this.onShowAll}
+                                 onFiltersUpdate={this.onFiltersUpdate}
+                                 gqlParams={this.props.parameter}
+                                 hidden={this.state.dropdown !== "filters"}
                         />
                     </div>
-                    <div className={'products-block zoom-' + this.state.zoom}>
-                        { this.state.products.length > 0 ? <SortersZoom onSetSorters={this.onSetSorters}
-                                                                        onSetZoom={this.onSetZoom}
-                                                                        currentSorter={this.state.sort}
-                                                                        hidden={this.state.dropdown !== "sorters"}
-                        /> : '' }
-
-                        <Products products={this.state.products}
-                                  currencySymbol={this.state.currencySymbol}
-                                  loadingComplete={this.state.productLoadingComplete}/>
-                        {this.isLocked ?  <div className={'smallLoader'}>
-                            <LoaderMask />
-                        </div> : ""}
-
-                    </div>
+                    <MobileDropdownTogglers onFiltersSubmit={this.onFiltersSubmit}
+                                            onFiltersClear={this.onFiltersClear}
+                                            onDropdownToggle={this.onDropdownToggle}
+                                            dropdownStatus={this.state.dropdown}
+                                            userFiltersSelected={this.state.userFiltersSelected}
+                                            userFiltersSubmited={this.state.userFiltersSubmited}
+                    />
                 </div>
-            );
-        } else {
-            return <LoaderMask />
-        }
+                <div className={'products-block zoom-' + this.state.zoom}>
+                    { this.state.products.length > 0 ? <SortersZoom onSetSorters={this.onSetSorters}
+                                                                    onSetZoom={this.onSetZoom}
+                                                                    currentSorter={this.state.sort}
+                                                                    hidden={this.state.dropdown !== "sorters"}
+                    /> : '' }
+
+                    <Products products={this.state.products}
+                              currencySymbol={this.state.currencySymbol}
+                              loadingComplete={this.state.productLoadingComplete}/>
+                    {this.isLocked ?  <div className={'smallLoader'}>
+                        <LoaderMask  text={"Products"}/>
+                    </div> : ""}
+
+                </div>
+            </div>
+        );
     }
 }
 

@@ -180,7 +180,7 @@ class Filters extends React.Component {
                         </div>
                     </PerfectScrollbar>
         } else {
-            return <LoaderMask />
+            return <LoaderMask  text={"filters file"}/>
         }
     }
 }

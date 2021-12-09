@@ -1,9 +1,9 @@
 import React from 'react';
 
-const LoaderMask = () => {
+const LoaderMask = ({text}) => {
 
     return <div data-role="filters-loader" className="loading-mask">
-        <div className="loader"></div>
+        <div className="loader">{text}</div>
     </div>
 };
 
