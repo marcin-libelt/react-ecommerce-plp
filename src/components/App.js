@@ -373,7 +373,9 @@ class App extends React.Component {
 
     afterGetProducts(scrollTo) {
         this.isLocked = false;
-
+        this.setState({
+            productLoadingComplete: true
+        });
         setTimeout(() => {
             // reset event listener
             if("undefined" != typeof document.querySelectorAll('ul.products')[0]) {
@@ -383,10 +385,6 @@ class App extends React.Component {
                 if(scrollTo) {
                     this.scrollToPosition();
                 }
-
-                this.setState({
-                    productLoadingComplete: true
-                });
             }
         }, 500);
     }
