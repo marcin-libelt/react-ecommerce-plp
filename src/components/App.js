@@ -342,7 +342,12 @@ class App extends React.Component {
             })
             .then(result => {
                 let products = [];
-                this.totalPages = result.data["discountFilteredProducts"]["page_info"]["total_pages"];
+
+                if(!loadNextPage) {
+                    this.totalPages = Math.ceil(result.data["discountFilteredProducts"]["total_count"] / this.defaults.chunkSize);
+                } else {
+                    this.totalPages = result.data["discountFilteredProducts"]["page_info"]["total_pages"];
+                }
 
                 if(loadNextPage) { // concat product items
                     const oldProducts = [...this.state.products];
