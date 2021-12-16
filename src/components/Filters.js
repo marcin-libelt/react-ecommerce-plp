@@ -10,7 +10,8 @@ const components = {
     filter_color: List,
     filter_heel_height: List,
     shoestyle: List,
-    size: List
+    size: List,
+    magento_subcategory: List
 };
 
 const Header = (props) => {
