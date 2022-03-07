@@ -44,17 +44,21 @@ class List extends React.Component {
             )
         } else {
             let label = this.state.filters[item].label;
+            let labelElement;
             if(label.match(/^.*(\.|,)5$/)) {
-                label = <span className="fraction">{label.replace(/(\.|,)5/g, "")}&frac12;</span>;
+                labelElement = <span className="fraction">{label.replace(/(\.|,)5/g, "")}&frac12;</span>;
+            } else {
+                labelElement = <span>{label}</span>
             }
             return (
                 <li key={index} className={isSelected ? 'active' : ''}>
-                    <button type={'button'}
-                            aria-selected={isSelected}
-                            className={isSelected ? 'is-selected' : ''}
-                            onClick={(event) => this.props.onFiltersUpdate(code, this.props.filter["request_var"], event)}>
-                        <span>{label}</span>
-                    </button>
+                    <input type={'checkbox'}
+                           title={label}
+                           checked={isSelected}
+                           onChange={(event) => this.props.onFiltersUpdate(code, this.props.filter["request_var"], event)}
+                           id={index + '-' + code}
+                           />
+                    <label htmlFor={index + '-' + code}>{labelElement}</label>
                 </li>
             )
         }
@@ -93,10 +97,13 @@ class List extends React.Component {
     }
 
     render() {
-        return <ul>
-          {this.createFormFields()}
-          {this.createAllToggle()}
-        </ul>
+        return <fieldset>
+            <legend className={'visually-hidden'}>{this.props.filter.name}</legend>
+                <ul className={this.props.filter["request_var"] !== "size" ? '' : 'size-selector'}>
+                  {this.createFormFields()}
+                  {this.createAllToggle()}
+                </ul>
+            </fieldset>
     };
 }
 
