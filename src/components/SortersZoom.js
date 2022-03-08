@@ -12,6 +12,9 @@ const SortersZoom = (props) => {
 
     const CreateSorter = (item, index) => {
         return <li key={index}>
+            <div className={'visually-hidden'}>
+                {`Page content will be updated upon selection of this ${sorters[item]} sorter`}
+            </div>
             <input type={'radio'}
                    title={sorters[item]}
                    id={'sort-' + item}
