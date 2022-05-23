@@ -337,6 +337,9 @@ class App extends React.Component {
                 context: {
                     headers: {
                         Store: this.props.parameter.storeCode
+                    },
+                    fetchOptions: {
+                        method: "GET"
                     }
                 }
             })
@@ -403,6 +406,9 @@ class App extends React.Component {
                 context: {
                     headers: {
                         Store: this.props.parameter.storeCode
+                    },
+                    fetchOptions: {
+                        method: "GET"
                     }
                 }
             })
