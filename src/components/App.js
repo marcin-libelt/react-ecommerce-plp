@@ -407,7 +407,10 @@ class App extends React.Component {
                 }
             })
             .then(result => {
-                this.setState({filters: result.data["discountCatalogFilters"].filters});
+                this.setState({
+                    filters: result.data["discountCatalogFilters"].filters,
+                    currencySymbol: result.data["currency"]["base_currency_symbol"]
+                });
             });
     }
 
@@ -426,6 +429,7 @@ class App extends React.Component {
                         <div className={'inner-container'}>
                             <TopCategories categories={this.props.parameter.topCategories}/>
                             <Filters filters={this.state.filters}
+                                     currencySymbol={this.state.currencySymbol}
                                      selectedFilters={this.state.selectedFilters}
                                      onShowAll={this.onShowAll}
                                      onFiltersUpdate={this.onFiltersUpdate}

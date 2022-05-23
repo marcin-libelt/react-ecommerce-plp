@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ApolloClient, { gql } from 'apollo-boost';
 import List from "./filters/List";
 import PriceSlider from "./filters/PriceSlider";
 import LoaderMask from "./LoaderMask";
@@ -45,54 +44,12 @@ class Filters extends React.Component {
         this.onHeaderClick = this.onHeaderClick.bind(this);
 
         this.state = {
-            filters: null,
+            filters: props.filters,
             currentFilterPanel: "size",
             filtersDropdownVisible: false,
             sortDropdownVisible: false,
-            currencySymbol: ""
+            currencySymbol: props.currencySymbol
         };
-
-        this.client = new ApolloClient({
-            uri: this.props.gqlParams.gql
-        });
-
-        this.FILTERS = gql`
-        {
-          discountCatalogFilters(category_id: ${this.props.gqlParams.categoryId}) {
-            filters {
-              name
-              filter_items_count
-              request_var
-              filter_items {
-                label
-                value_string
-                items_count
-              }
-            }
-          }
-          currency {
-                base_currency_symbol
-          }
-        }
-        `;
-    }
-
-    componentDidMount() {
-        this.client
-            .query({
-                query: this.FILTERS,
-                context: {
-                    headers: {
-                        Store: this.props.gqlParams.storeCode
-                    }
-                }
-            })
-            .then(result => {
-                this.setState({
-                    filters: result.data["discountCatalogFilters"].filters,
-                    currencySymbol: result.data["currency"]["base_currency_symbol"]
-                });
-            });
     }
 
     getCounter(request_var) {

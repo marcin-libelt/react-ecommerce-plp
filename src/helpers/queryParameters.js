@@ -125,6 +125,9 @@ export const prepareFiltersQuery = (params) => {
               }
             }
           }
+          currency {
+                base_currency_symbol
+          }
         }
         `;
 };
