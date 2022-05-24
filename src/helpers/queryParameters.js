@@ -101,10 +101,6 @@ export const prepareProductsQuery = (params) => {
               total_pages
             }
           }
-          currency {
-                base_currency_symbol
-                base_currency_code
-          }
         }
         `;
 };
@@ -124,9 +120,6 @@ export const prepareFiltersQuery = (params) => {
                 items_count
               }
             }
-          }
-          currency {
-                base_currency_symbol
           }
         }
         `;

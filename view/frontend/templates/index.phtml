@@ -6,8 +6,7 @@
             topCategories: <?php echo $block->getTopCategoriesJson(); ?>,
             storeCode: '<?php echo $block->getStoreCode() ?>',
             categoryId: '<?php echo $block->getCurrentCategory()->getId() ?>',
-            baseCurrencySymbol: '<?php echo $block->getStore()->getBaseCurrency()->getCurrencySymbol() ?>',
-            baseCurrencyCode: '<?php echo $block->getStore()->getBaseCurrency()->getCode() ?>'
+            currencySymbol: '<?php echo $block->getCurrencySymbol() ?>'
         });
     });
 </script>

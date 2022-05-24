@@ -35,8 +35,7 @@ class App extends React.Component {
             userFiltersSubmited: false,
             productLoadingComplete: false,
             currentPage: 1,
-            isSidebarFixed: false,
-            currencySymbol: ""
+            isSidebarFixed: false
         };
 
         this.defaults = {
@@ -359,14 +358,10 @@ class App extends React.Component {
                     products = result.data["discountFilteredProducts"].items;
                 }
 
-                const currencySymbol = !result.data["currency"]["base_currency_symbol"] ?
-                    result.data["currency"]["base_currency_code"] : result.data["currency"]["base_currency_symbol"];
-
                 this.setState({
                     products: products,
                     userFiltersSelected: false,
-                    userFiltersSubmited: this.isAnyFiltersApplied(),
-                    currencySymbol
+                    userFiltersSubmited: this.isAnyFiltersApplied()
                 }, () => { this.afterGetProducts(scrollToPosition); this.beforeUserSubmit = false; });
             });
     }
@@ -414,8 +409,7 @@ class App extends React.Component {
             })
             .then(result => {
                 this.setState({
-                    filters: result.data["discountCatalogFilters"].filters,
-                    currencySymbol: result.data["currency"]["base_currency_symbol"]
+                    filters: result.data["discountCatalogFilters"].filters
                 });
             });
     }
@@ -435,7 +429,7 @@ class App extends React.Component {
                         <div className={'inner-container'}>
                             <TopCategories categories={this.props.parameter.topCategories}/>
                             <Filters filters={this.state.filters}
-                                     currencySymbol={this.state.currencySymbol}
+                                     currencySymbol={this.props.parameter.currencySymbol}
                                      selectedFilters={this.state.selectedFilters}
                                      onShowAll={this.onShowAll}
                                      onFiltersUpdate={this.onFiltersUpdate}
@@ -459,7 +453,7 @@ class App extends React.Component {
                         /> : '' }
 
                         <Products products={this.state.products}
-                                  currencySymbol={this.state.currencySymbol}
+                                  currencySymbol={this.props.parameter.currencySymbol}
                                   loadingComplete={this.state.productLoadingComplete}/>
                         {this.isLocked ?  <div className={'smallLoader'}>
                             <LoaderMask />

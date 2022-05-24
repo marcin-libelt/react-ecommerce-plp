@@ -87,4 +87,13 @@ class View extends \Magento\Framework\View\Element\Template
     {
         return $this->getStore()->getCode();
     }
+
+    public function getCurrencySymbol()
+    {
+        $symbol = $this->getStore()->getBaseCurrency()->getCurrencySymbol();
+        if(!$symbol) {
+            return $this->getStore()->getBaseCurrency()->getCode();
+        }
+        return $symbol;
+    }
 }
