@@ -31,37 +31,28 @@ class List extends React.Component {
     createField = (item, index) => {
         const isSelected = this.state.filters[item].selected;
         let code = this.state.filters[item].code;
-        if(this.props.filter["request_var"] !== "size") {
-            return (
-                <li key={index} className={isSelected ? 'active' : ''}>
-                    <input type={'checkbox'}
-                           title={this.state.filters[item].label}
-                           checked={isSelected}
-                           onChange={(event) => this.props.onFiltersUpdate(code, this.props.filter["request_var"], event)}
-                           id={index + '-' + code}/>
-                    <label htmlFor={index + '-' + code}>{this.state.filters[item].label}</label>
-                </li>
-            )
+        let label = this.state.filters[item].label;
+        let labelElement;
+
+        if(label.length > 5) { // greater than 5 i.e. "one size" will be
+            labelElement = <label htmlFor={index + '-' + code} className={'os'}><span>{label}</span></label>
+        } else if(label.match(/^.*(\.|,)5$/) && this.props.filter["request_var"] === "size") {
+            labelElement = <label htmlFor={index + '-' + code}><span className="fraction">{label.replace(/(\.|,)5/g, "")}&frac12;</span></label>;
         } else {
-            let label = this.state.filters[item].label;
-            let labelElement;
-            if(label.match(/^.*(\.|,)5$/)) {
-                labelElement = <span className="fraction">{label.replace(/(\.|,)5/g, "")}&frac12;</span>;
-            } else {
-                labelElement = <span>{label}</span>
-            }
-            return (
-                <li key={index} className={isSelected ? 'active' : ''}>
-                    <input type={'checkbox'}
-                           title={label}
-                           checked={isSelected}
-                           onChange={(event) => this.props.onFiltersUpdate(code, this.props.filter["request_var"], event)}
-                           id={index + '-' + code}
-                           />
-                    <label htmlFor={index + '-' + code}>{labelElement}</label>
-                </li>
-            )
+            labelElement = <label htmlFor={index + '-' + code}><span>{label}</span></label>
         }
+
+        return (
+            <li key={index} className={isSelected ? 'active' : ''}>
+                <input type={'checkbox'}
+                       title={label}
+                       checked={isSelected}
+                       onChange={(event) => this.props.onFiltersUpdate(code, this.props.filter["request_var"], event)}
+                       id={index + '-' + code}
+                />
+                {labelElement}
+            </li>
+        )
     };
 
     createAllToggle = () => {
