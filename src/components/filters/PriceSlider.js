@@ -60,11 +60,7 @@ class PriceSlider extends React.Component  {
             <div className={'header'}>
                 {'Price'}
                 <span className='sr-only'>
-                    Product price range selector.
-                    Right Arrow: Increase the value of the slider by one step.
-                    Up Arrow: Increase the value of the slider by one step.
-                    Left Arrow: Decrease the value of the slider by one step.
-                    Down Arrow: Decrease the value of the slider by one step.
+                    Product price range selector
                 </span>
             </div>
 
@@ -78,14 +74,15 @@ class PriceSlider extends React.Component  {
                 <span>{this.props.currencySymbol}</span>
                 <input id='price-max' onChange={event => this.handleChange(event, 'max')} value={labelMax} />
             </div>
-            <InputRange
-                minValue={this.baseRange.min}
-                maxValue={this.baseRange.max}
-                value={priceValue}
-                step={10}
-                onChange={this.onPriceSelectorChange}
-            />
-
+            <div aria-hidden={'true'}>
+                <InputRange
+                    minValue={this.baseRange.min}
+                    maxValue={this.baseRange.max}
+                    value={priceValue}
+                    step={10}
+                    onChange={this.onPriceSelectorChange}
+                />
+            </div>
         </div>
     }
 
